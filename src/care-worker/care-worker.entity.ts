@@ -1,6 +1,6 @@
 import { CareWorkerMetaEntity } from 'src/care-worker-meta/care-worker-meta.entity';
 import { CareWorkerScheduleEntity } from 'src/care-worker-schedule/care-worker-schedule.entity';
-import { UserEntity } from 'src/user/user.entity';
+import { CareCenterEntity } from 'src/care-center/care-center.entity';
 import { Entity, Column, PrimaryGeneratedColumn, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 
 @Entity('care-worker')
@@ -54,16 +54,16 @@ export class CareWorkerEntity {
     type: 'int',
     nullable: false,
   })
-  public userId: number;
+  public careCenterId: number;
 
-  @ManyToOne((type) => UserEntity, (user) => user.careWorkers, {
+  @ManyToOne((type) => CareCenterEntity, (careCenter) => careCenter.careWorkers, {
     nullable: false,
   })
   @JoinColumn({
-    name: 'userId',
+    name: 'careCenterId',
     referencedColumnName: 'id',
   })
-  public user: UserEntity;
+  public careCenter: CareCenterEntity;
 
   @OneToMany(() => CareWorkerMetaEntity, (careWorkerMeta) => careWorkerMeta.careWorker)
   public careWorkerMetas: CareWorkerMetaEntity[];

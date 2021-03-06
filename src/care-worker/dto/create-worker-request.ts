@@ -30,7 +30,7 @@ class BasicWorkerMeta {
   public description: string;
 
   @IsNotEmpty()
-  public userId: number;
+  public careCenterId: number;
 }
 
 class ScheduleTableInfo {

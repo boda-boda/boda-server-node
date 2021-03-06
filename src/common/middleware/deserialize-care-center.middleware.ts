@@ -2,18 +2,19 @@ import { NestMiddleware, Injectable } from '@nestjs/common';
 import { Response, Request, NextFunction } from 'express';
 import * as jwt from 'jsonwebtoken';
 
-import UserResponse from '../../user/dto/user-response.dto';
+import CareCenterResponse from '../../care-center/dto/care-center-response.dto';
 
 declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Express {
     interface Request {
-      user?: UserResponse;
+      careCenter?: CareCenterResponse;
     }
   }
 }
 
 @Injectable()
-export class DeserializeUserMiddleWare implements NestMiddleware {
+export class DeserializeCareCenterMiddleWare implements NestMiddleware {
   public async use(request: Request, response: Response, next: NextFunction): Promise<void> {
     const accessToken = request.cookies.accessToken;
 
@@ -25,7 +26,7 @@ export class DeserializeUserMiddleWare implements NestMiddleware {
       const { data }: any = jwt.verify(accessToken, process.env.JWT_SECRET);
 
       if (data) {
-        request.user = data;
+        request.careCenter = data;
       }
     } catch (e) {
       response.clearCookie('accessToken');

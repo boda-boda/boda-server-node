@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { UserModule } from 'src/user/user.module';
 import { CareWorkerService } from './care-worker.service';
 import { CareWorkerController } from './care-worker.controller';
 import { CareWorkerMetaModule } from 'src/care-worker-meta/care-worker-meta.module';

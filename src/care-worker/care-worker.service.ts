@@ -1,10 +1,8 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { worker } from 'cluster';
 import { CareWorkerMetaEntity } from 'src/care-worker-meta/care-worker-meta.entity';
 import { CareWorkerScheduleEntity } from 'src/care-worker-schedule/care-worker-schedule.entity';
 import { CAPABILITY, CAREER, PERSONALITY, REGION } from 'src/constant';
-import { UserEntity } from 'src/user/user.entity';
 import { Repository } from 'typeorm';
 import { CareWorkerEntity } from './care-worker.entity';
 import CreateWorkerRequest from './dto/create-worker-request';
@@ -33,17 +31,20 @@ export class CareWorkerService {
     });
   }
 
-  public getCareWorkersByUserId(userId: number) {
+  public getCareWorkersByCareCenterId(careCenterId: number) {
     return this.careWorkerEntity.find({
       relations: ['careWorkerMetas', 'careWorkerSchedules'],
       where: {
-        userId,
+        careCenterId,
       },
     });
   }
 
-  public async createCareWorker(userId: number, careWorker: CreateWorkerRequest) {
-    const newCareWorker = this.careWorkerEntity.create({ ...careWorker.basicWorkerState, userId });
+  public async createCareWorker(careCenterId: number, careWorker: CreateWorkerRequest) {
+    const newCareWorker = this.careWorkerEntity.create({
+      ...careWorker.basicWorkerState,
+      careCenterId,
+    });
     const targetWorker = await this.careWorkerEntity.save(newCareWorker);
 
     const regionMeta = careWorker.regions.map((k) => {
@@ -107,14 +108,14 @@ export class CareWorkerService {
     return targetWorker;
   }
 
-  public async updateCareWorker(userId: number, careWorker: CreateWorkerRequest) {
+  public async updateCareWorker(careCenterId: number, careWorker: CreateWorkerRequest) {
     const targetWorker = await this.careWorkerEntity.findOne({
       where: {
         id: careWorker.id,
       },
     });
 
-    if (targetWorker.userId !== userId) {
+    if (targetWorker.careCenterId !== careCenterId) {
       throw new UnauthorizedException('권한이 없습니다.');
     }
 
@@ -197,7 +198,7 @@ export class CareWorkerService {
 
     if (!worker) throw new NotFoundException('해당 Id의 careWorker가 존재하지 않습니다.');
 
-    return worker.userId === myId;
+    return worker.careCenterId === myId;
   }
 
   public async deleteCareWorker(careWorkerId: number) {

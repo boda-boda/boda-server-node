@@ -1,6 +1,6 @@
 import { IsNotEmpty } from 'class-validator';
 
-export default class CreateUserRequest {
+export default class CreateCareCenterRequest {
   @IsNotEmpty()
   public readonly name: string;
 

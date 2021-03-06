@@ -1,8 +1,8 @@
 import { CareWorkerEntity } from 'src/care-worker/care-worker.entity';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 
-@Entity('users')
-export class UserEntity {
+@Entity('care-center')
+export class CareCenterEntity {
   @PrimaryGeneratedColumn()
   public id: number;
 
@@ -10,7 +10,7 @@ export class UserEntity {
     type: 'varchar',
     length: 50,
     nullable: false,
-    default: 'user',
+    default: 'care-center',
   })
   public type: string;
 
@@ -55,6 +55,6 @@ export class UserEntity {
   })
   public description: string;
 
-  @OneToMany(() => CareWorkerEntity, (careWorker) => careWorker.user)
+  @OneToMany(() => CareWorkerEntity, (careWorker) => careWorker.careCenter)
   public careWorkers: CareWorkerEntity[];
 }

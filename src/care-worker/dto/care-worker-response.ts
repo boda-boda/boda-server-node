@@ -1,6 +1,6 @@
 import { CareWorkerMetaEntity } from 'src/care-worker-meta/care-worker-meta.entity';
 import { CareWorkerScheduleEntity } from 'src/care-worker-schedule/care-worker-schedule.entity';
-import UserResponse from 'src/user/dto/user-response.dto';
+import CareCenterResponse from 'src/care-center/dto/care-center-response.dto';
 import { CareWorkerEntity } from '../care-worker.entity';
 
 export default class CareWorkerResponse {
@@ -13,8 +13,10 @@ export default class CareWorkerResponse {
     this.phoneNumber = careWorkerEntity.phoneNumber;
     this.address = careWorkerEntity.address;
     this.description = careWorkerEntity.description;
-    this.userId = careWorkerEntity.userId;
-    this.user = careWorkerEntity.user ? new UserResponse(careWorkerEntity.user) : null;
+    this.careCenterId = careWorkerEntity.careCenterId;
+    this.careCenter = careWorkerEntity.careCenter
+      ? new CareCenterResponse(careWorkerEntity.careCenter)
+      : null;
     this.careWorkerSchedules = careWorkerEntity.careWorkerSchedules;
     this.careWorkerMetas = careWorkerEntity.careWorkerMetas;
   }
@@ -27,8 +29,8 @@ export default class CareWorkerResponse {
   public profile: string;
   public address: string;
   public description: string;
-  public userId: number;
-  public user?: UserResponse;
+  public careCenterId: number;
+  public careCenter?: CareCenterResponse;
   public careWorkerMetas: CareWorkerMetaEntity[];
   public careWorkerSchedules: CareWorkerScheduleEntity[];
 }

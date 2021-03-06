@@ -7,7 +7,6 @@ import {
   InternalServerErrorException,
   Param,
   Post,
-  Put,
   Req,
   UnauthorizedException,
   UploadedFile,
@@ -15,10 +14,10 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { request, Request } from 'express';
+import { Request } from 'express';
 import { CareWorkerMetaService } from 'src/care-worker-meta/care-worker-meta.service';
 import { CareWorkerScheduleService } from 'src/care-worker-schedule/care-worker-schedule.service';
-import { OnlyUserGuard } from 'src/common/guard/only-user.guard';
+import { OnlyCareCenterGuard } from 'src/common/guard/only-care-center.guard';
 import { ValidateIdPipe } from 'src/common/pipe/validate-id.pipe';
 import { getConnection } from 'typeorm';
 import { CareWorkerService } from './care-worker.service';
@@ -35,7 +34,7 @@ export class CareWorkerController {
 
   @Get('/:id')
   @Header('Cache-control', 'no-cache, no-store, must-revalidate')
-  @UseGuards(OnlyUserGuard)
+  @UseGuards(OnlyCareCenterGuard)
   public async getCareWorkerDetail(@Param('id', ValidateIdPipe) id: number) {
     const careWorker = await this.careWorkerService.getCareWorkerById(id);
 
@@ -44,7 +43,7 @@ export class CareWorkerController {
 
   @Post('/:id/profile')
   @Header('Cache-control', 'no-cache, no-store, must-revalidate')
-  @UseGuards(OnlyUserGuard)
+  @UseGuards(OnlyCareCenterGuard)
   @UseInterceptors(FileInterceptor('image'))
   public async uploadProfile(@UploadedFile() file, @Param('id', ValidateIdPipe) id: number) {
     return await this.careWorkerService.uploadProfileImage(id, file);
@@ -52,7 +51,7 @@ export class CareWorkerController {
 
   @Post('/profile')
   @Header('Cache-control', 'no-cache, no-store, must-revalidate')
-  @UseGuards(OnlyUserGuard)
+  @UseGuards(OnlyCareCenterGuard)
   @UseInterceptors(FileInterceptor('image'))
   public async uploadImage(@UploadedFile() file) {
     return await this.careWorkerService.uploadImage(file);
@@ -60,22 +59,24 @@ export class CareWorkerController {
 
   @Get('/')
   @Header('Cache-control', 'no-cache, no-store, must-revalidate')
-  @UseGuards(OnlyUserGuard)
-  public async getCareWorkerOfUser(@Req() request: Request) {
-    if (!request.user.id) {
+  @UseGuards(OnlyCareCenterGuard)
+  public async getCareWorkerOfCareCenter(@Req() request: Request) {
+    if (!request.careCenter.id) {
       throw new InternalServerErrorException('JWT가 이상합니다.');
     }
 
-    const careWorkers = await this.careWorkerService.getCareWorkersByUserId(request.user.id);
+    const careWorkers = await this.careWorkerService.getCareWorkersByCareCenterId(
+      request.careCenter.id,
+    );
 
     return careWorkers.map((c) => new CareWorkerResponse(c));
   }
 
   @Post('/')
   @Header('Cache-control', 'no-cache, no-store, must-revalidate')
-  @UseGuards(OnlyUserGuard)
+  @UseGuards(OnlyCareCenterGuard)
   public async upsertCareWorker(@Req() request: Request, @Body() body: CreateWorkerRequest) {
-    if (!request.user.id) {
+    if (!request.careCenter.id) {
       throw new InternalServerErrorException('JWT가 이상합니다.');
     }
 
@@ -86,9 +87,9 @@ export class CareWorkerController {
     try {
       if (!body.id) {
         //insert
-        result = await this.careWorkerService.createCareWorker(request.user.id, body);
+        result = await this.careWorkerService.createCareWorker(request.careCenter.id, body);
       } else {
-        result = await this.careWorkerService.updateCareWorker(request.user.id, body);
+        result = await this.careWorkerService.updateCareWorker(request.careCenter.id, body);
       }
       await queryRunner.commitTransaction();
     } catch (e) {
@@ -105,9 +106,9 @@ export class CareWorkerController {
 
   @Delete('/:id')
   @Header('Cache-control', 'no-cache, no-store, must-revalidate')
-  @UseGuards(OnlyUserGuard)
+  @UseGuards(OnlyCareCenterGuard)
   public async deleteCareWorker(@Req() request, @Param('id', ValidateIdPipe) id: number) {
-    if (!this.careWorkerService.isThisWorkerIsMine(request.user.id, id)) {
+    if (!this.careWorkerService.isThisWorkerIsMine(request.careCenter.id, id)) {
       throw new UnauthorizedException('삭제 권한이 없습니다.');
     }
 
