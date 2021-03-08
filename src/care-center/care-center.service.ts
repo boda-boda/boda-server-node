@@ -1,9 +1,6 @@
 import { Repository } from 'typeorm';
 import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-
-import * as jwt from 'jsonwebtoken';
-import CareCenterResponse from './dto/care-center-response.dto';
 import { CareCenterEntity } from './care-center.entity';
 import Bcrypt from 'src/common/lib/bcrypt';
 import CreateCareCenterRequest from './dto/create-care-center-request.dto';
@@ -25,44 +22,6 @@ export class CareCenterService {
 
   public getCareCenterByName(name: string) {
     return this.careCenterRepository.findOne({ where: { name } });
-  }
-
-  public createAccessToken(careCenterEntity: CareCenterEntity) {
-    const careCenterResponseDTO = new CareCenterResponse(careCenterEntity);
-
-    const accessToken = jwt.sign(
-      { data: careCenterResponseDTO, timestamp: Date.now() },
-      process.env.JWT_ACCESSTOKEN_SECRET,
-      {
-        expiresIn: '1h',
-      },
-    );
-
-    return accessToken;
-  }
-
-  public createRefreshToken(careCenterEntity: CareCenterEntity) {
-    const careCenterResponseDTO = new CareCenterResponse(careCenterEntity);
-
-    const refreshToken = jwt.sign(
-      { data: careCenterResponseDTO, timestamp: Date.now() },
-      process.env.JWT_ACCESSTOKEN_SECRET,
-      {
-        expiresIn: '30d',
-      },
-    );
-
-    return refreshToken;
-  }
-
-  public async checkPassword(careCenter: CareCenterEntity, password: string) {
-    const isPasswordCorrect = await Bcrypt.compare(password, careCenter.password);
-
-    if (isPasswordCorrect) {
-      return true;
-    }
-
-    return false;
   }
 
   public async createCareCenter({

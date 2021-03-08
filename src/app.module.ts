@@ -9,6 +9,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { DeserializeCareCenterMiddleWare } from './common/middleware/deserialize-care-center.middleware';
 import { CareCenterMetaModule } from './care-center-meta/care-center-meta.module';
 import { ConsultModule } from './consult/consult.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { ConsultModule } from './consult/consult.module';
     TypeOrmModule.forRoot(),
     CareCenterMetaModule,
     ConsultModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
