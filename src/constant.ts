@@ -1,6 +1,6 @@
 export const CAREER = 'Career';
 export const CAPABILITY = 'Capability';
-export const PERSONALITY = 'Personality';
+export const PERSONALITY = 'Personality'; // DEPRECATED (2021.03.08 - 성격 정보는 빼달라는 요구사항)
 export const REGION = 'Region';
 
 export type CareWorkerMetaType = 'Career' | 'Capability' | 'Personality';

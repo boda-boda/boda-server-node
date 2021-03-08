@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/co
 import { InjectRepository } from '@nestjs/typeorm';
 import { CareWorkerMetaEntity } from 'src/care-worker-meta/care-worker-meta.entity';
 import { CareWorkerScheduleEntity } from 'src/care-worker-schedule/care-worker-schedule.entity';
-import { CAPABILITY, CAREER, PERSONALITY, REGION } from 'src/constant';
+import { CAPABILITY, CAREER, REGION } from 'src/constant';
 import { Repository } from 'typeorm';
 import { CareWorkerEntity } from './care-worker.entity';
 import CreateWorkerRequest from './dto/create-worker-request';
@@ -73,18 +73,9 @@ export class CareWorkerService {
       };
     });
 
-    const personalityMeta = careWorker.selectedPersonalities.map((val) => {
-      return {
-        type: PERSONALITY,
-        key: val,
-        careWorkerId: targetWorker.id,
-      };
-    });
-
     const allMetaEntity = this.careWorkerMetaRepository.create([
       ...capabilityMeta,
       ...careerMeta,
-      ...personalityMeta,
       ...regionMeta,
     ]);
 
@@ -154,18 +145,9 @@ export class CareWorkerService {
       };
     });
 
-    const personalityMeta = careWorker.selectedPersonalities.map((val) => {
-      return {
-        type: PERSONALITY,
-        key: val,
-        careWorkerId: careWorker.id,
-      };
-    });
-
     const allMetaEntity = this.careWorkerMetaRepository.create([
       ...capabilityMeta,
       ...careerMeta,
-      ...personalityMeta,
       ...regionMeta,
     ]);
 

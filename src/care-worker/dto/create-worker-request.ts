@@ -1,4 +1,5 @@
-import { IsBoolean, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsArray, IsBoolean, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
 
 class KeyPair {
   @IsNotEmpty()
@@ -34,33 +35,52 @@ class BasicWorkerMeta {
 }
 
 class ScheduleTableInfo {
+  @IsArray({ each: true })
   public Mon: string[][];
+
+  @IsArray({ each: true })
   public Tue: string[][];
+
+  @IsArray({ each: true })
   public Wed: string[][];
+
+  @IsArray({ each: true })
   public Thu: string[][];
+
+  @IsArray({ each: true })
   public Fri: string[][];
+
+  @IsArray({ each: true })
   public Sat: string[][];
+
+  @IsArray({ each: true })
   public Sun: string[][];
 }
 
 export default class CreateWorkerRequest {
   public id: string;
 
-  @ValidateNested()
+  @ValidateNested({ each: true })
+  @Type(() => BasicWorkerMeta)
+  @IsNotEmpty()
   public basicWorkerState: BasicWorkerMeta;
 
-  @IsString({ each: true })
-  public selectedPersonalities: string[];
-
-  @ValidateNested()
+  @ValidateNested({ each: true })
+  @Type(() => KeyPair)
+  @IsNotEmpty()
   public capableKeyPair: KeyPair[];
 
-  @ValidateNested()
+  @ValidateNested({ each: true })
+  @Type(() => KeyPair)
+  @IsNotEmpty()
   public careerKeyPair: KeyPair[];
 
-  @ValidateNested()
+  @ValidateNested({ each: true })
+  @Type(() => ScheduleTableInfo)
+  @IsNotEmpty()
   public scheduleTableInfo: ScheduleTableInfo;
 
   @IsString({ each: true })
+  @IsNotEmpty()
   public regions: string[];
 }

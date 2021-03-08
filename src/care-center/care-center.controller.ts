@@ -22,6 +22,7 @@ import { ValidateIdPipe } from 'src/common/pipe/validate-id.pipe';
 import CreateCareCenterRequest from './dto/create-care-center-request.dto';
 import LoginRequestDTO from './dto/login-request.dto';
 import { CareCenterService } from './care-center.service';
+import { timer } from 'src/common/lib/time';
 
 @Controller('care-center')
 export class CareCenterController {
@@ -52,6 +53,8 @@ export class CareCenterController {
     // 계정 연동이 된 경우
 
     const accessToken = this.careCenterService.createAccessToken(associatedCareCenter);
+
+    await timer(0.25);
 
     response.cookie('accessToken', accessToken);
     response.setHeader('Access-Control-Allow-Credentials', 'true');
