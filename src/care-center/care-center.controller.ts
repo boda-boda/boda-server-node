@@ -17,7 +17,6 @@ import { Request, Response } from 'express';
 import { CareWorkerService } from 'src/care-worker/care-worker.service';
 import CareWorkerResponse from 'src/care-worker/dto/care-worker-response';
 import { OnlyAdminGuard } from 'src/common/guard/only-admin.guard';
-import { OnlyGuestGuard } from 'src/common/guard/only-guest.guard';
 import { OnlyCareCenterGuard } from 'src/common/guard/only-care-center.guard';
 import { ValidateIdPipe } from 'src/common/pipe/validate-id.pipe';
 import CreateCareCenterRequest from './dto/create-care-center-request.dto';

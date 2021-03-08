@@ -8,6 +8,7 @@ import { CareWorkerScheduleModule } from './care-worker-schedule/care-worker-sch
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DeserializeCareCenterMiddleWare } from './common/middleware/deserialize-care-center.middleware';
 import { CareCenterMetaModule } from './care-center-meta/care-center-meta.module';
+import { ConsultModule } from './consult/consult.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { CareCenterMetaModule } from './care-center-meta/care-center-meta.module
     CareWorkerScheduleModule,
     TypeOrmModule.forRoot(),
     CareCenterMetaModule,
+    ConsultModule,
   ],
   controllers: [AppController],
   providers: [AppService],
