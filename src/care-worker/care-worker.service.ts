@@ -13,17 +13,17 @@ import { v4 } from 'uuid';
 export class CareWorkerService {
   public constructor(
     @InjectRepository(CareWorkerEntity)
-    public readonly careWorkerEntity: Repository<CareWorkerEntity>,
+    public readonly careWorkerRepository: Repository<CareWorkerEntity>,
 
     @InjectRepository(CareWorkerMetaEntity)
-    public readonly careWorkerMetaEntity: Repository<CareWorkerMetaEntity>,
+    public readonly careWorkerMetaRepository: Repository<CareWorkerMetaEntity>,
 
     @InjectRepository(CareWorkerScheduleEntity)
-    public readonly careWorkerScheduleEntity: Repository<CareWorkerScheduleEntity>,
+    public readonly careWorkerScheduleRepository: Repository<CareWorkerScheduleEntity>,
   ) {}
 
   public getCareWorkerById(id: number) {
-    return this.careWorkerEntity.findOne({
+    return this.careWorkerRepository.findOne({
       relations: ['careWorkerMetas', 'careWorkerSchedules'],
       where: {
         id,
@@ -32,7 +32,7 @@ export class CareWorkerService {
   }
 
   public getCareWorkersByCareCenterId(careCenterId: number) {
-    return this.careWorkerEntity.find({
+    return this.careWorkerRepository.find({
       relations: ['careWorkerMetas', 'careWorkerSchedules'],
       where: {
         careCenterId,
@@ -41,11 +41,11 @@ export class CareWorkerService {
   }
 
   public async createCareWorker(careCenterId: number, careWorker: CreateWorkerRequest) {
-    const newCareWorker = this.careWorkerEntity.create({
+    const newCareWorker = this.careWorkerRepository.create({
       ...careWorker.basicWorkerState,
       careCenterId,
     });
-    const targetWorker = await this.careWorkerEntity.save(newCareWorker);
+    const targetWorker = await this.careWorkerRepository.save(newCareWorker);
 
     const regionMeta = careWorker.regions.map((k) => {
       return {
@@ -81,7 +81,7 @@ export class CareWorkerService {
       };
     });
 
-    const allMetaEntity = this.careWorkerMetaEntity.create([
+    const allMetaEntity = this.careWorkerMetaRepository.create([
       ...capabilityMeta,
       ...careerMeta,
       ...personalityMeta,
@@ -101,15 +101,15 @@ export class CareWorkerService {
       return [...acc, ...newMeta];
     }, []);
 
-    const scheduleMetaEntity = this.careWorkerScheduleEntity.create(scheduleMeta);
-    await this.careWorkerMetaEntity.save(allMetaEntity);
-    await this.careWorkerScheduleEntity.save(scheduleMetaEntity);
+    const scheduleMetaEntity = this.careWorkerScheduleRepository.create(scheduleMeta);
+    await this.careWorkerMetaRepository.save(allMetaEntity);
+    await this.careWorkerScheduleRepository.save(scheduleMetaEntity);
 
     return targetWorker;
   }
 
   public async updateCareWorker(careCenterId: number, careWorker: CreateWorkerRequest) {
-    const targetWorker = await this.careWorkerEntity.findOne({
+    const targetWorker = await this.careWorkerRepository.findOne({
       where: {
         id: careWorker.id,
       },
@@ -119,12 +119,12 @@ export class CareWorkerService {
       throw new UnauthorizedException('권한이 없습니다.');
     }
 
-    const updatedTargetWorker = this.careWorkerEntity.merge(
+    const updatedTargetWorker = this.careWorkerRepository.merge(
       targetWorker,
       careWorker.basicWorkerState,
     );
 
-    const result = await this.careWorkerEntity.save(updatedTargetWorker);
+    const result = await this.careWorkerRepository.save(updatedTargetWorker);
 
     await this.deleteAllCurrentMetadataOfCareWorker(careWorker.id);
 
@@ -162,7 +162,7 @@ export class CareWorkerService {
       };
     });
 
-    const allMetaEntity = this.careWorkerMetaEntity.create([
+    const allMetaEntity = this.careWorkerMetaRepository.create([
       ...capabilityMeta,
       ...careerMeta,
       ...personalityMeta,
@@ -182,15 +182,15 @@ export class CareWorkerService {
       return [...acc, ...newMeta];
     }, []);
 
-    const scheduleMetaEntity = this.careWorkerScheduleEntity.create(scheduleMeta);
-    await this.careWorkerMetaEntity.save(allMetaEntity);
-    await this.careWorkerScheduleEntity.save(scheduleMetaEntity);
+    const scheduleMetaEntity = this.careWorkerScheduleRepository.create(scheduleMeta);
+    await this.careWorkerMetaRepository.save(allMetaEntity);
+    await this.careWorkerScheduleRepository.save(scheduleMetaEntity);
 
     return targetWorker;
   }
 
   public async isThisWorkerIsMine(myId: number, workerId: number) {
-    const worker = await this.careWorkerEntity.findOne({
+    const worker = await this.careWorkerRepository.findOne({
       where: {
         id: workerId,
       },
@@ -204,7 +204,7 @@ export class CareWorkerService {
   public async deleteCareWorker(careWorkerId: number) {
     await this.deleteAllCurrentMetadataOfCareWorker(careWorkerId);
 
-    return await this.careWorkerEntity.delete({ id: careWorkerId });
+    return await this.careWorkerRepository.delete({ id: careWorkerId });
   }
 
   public async uploadImage(file: any) {
@@ -214,7 +214,7 @@ export class CareWorkerService {
   }
 
   public async uploadProfileImage(id: number, file: any) {
-    const careWorker = await this.careWorkerEntity.findOne({ where: { id } });
+    const careWorker = await this.careWorkerRepository.findOne({ where: { id } });
     if (!careWorker) throw new NotFoundException('그런 CAreWorker 없다');
 
     const { originalname } = file;
@@ -228,17 +228,17 @@ export class CareWorkerService {
     const profile = data.Location;
 
     careWorker.profile = profile;
-    await this.careWorkerEntity.save(careWorker);
+    await this.careWorkerRepository.save(careWorker);
 
     return careWorker;
   }
 
   private async deleteAllCurrentMetadataOfCareWorker(careWorkerId: number) {
-    await this.careWorkerMetaEntity.delete({
+    await this.careWorkerMetaRepository.delete({
       careWorkerId,
     });
 
-    await this.careWorkerScheduleEntity.delete({
+    await this.careWorkerScheduleRepository.delete({
       careWorkerId,
     });
   }

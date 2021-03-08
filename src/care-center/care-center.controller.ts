@@ -33,7 +33,6 @@ export class CareCenterController {
 
   @Post('login')
   @Header('Cache-control', 'no-cache, no-store, must-revalidate')
-  @UseGuards(OnlyGuestGuard)
   public async login(@Body() { name, password }: LoginRequestDTO, @Res() response: Response) {
     const associatedCareCenter = await this.careCenterService.getCareCenterByName(name);
 
@@ -108,4 +107,8 @@ export class CareCenterController {
 
     return careWorkers.map((c) => new CareWorkerResponse(c));
   }
+
+  @Get('')
+  @UseGuards(OnlyCareCenterGuard)
+  public async getMyCareCenter(@Req() request: Request) {}
 }

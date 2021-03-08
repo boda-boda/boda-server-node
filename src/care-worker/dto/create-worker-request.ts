@@ -1,4 +1,4 @@
-import { IsBoolean, IsNotEmpty, IsSemVer, IsString, ValidateNested } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
 
 class KeyPair {
   @IsNotEmpty()
