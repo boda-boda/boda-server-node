@@ -56,7 +56,7 @@ export class CareCenterController {
     response.cookie('accessToken', accessToken);
     response.setHeader('Access-Control-Allow-Credentials', 'true');
     response.setHeader('Cache-Control', ['no-cache', 'no-store', 'must-revalidate']);
-    response.json({ result: true });
+    response.send(null);
   }
 
   @Post('logout')
@@ -65,7 +65,7 @@ export class CareCenterController {
   public async logout(@Res() response: Response) {
     response.clearCookie('accessToken');
     response.setHeader('Access-Control-Allow-Credentials', 'true');
-    response.json({ result: true });
+    response.send(null);
   }
 
   @Post('create')
@@ -92,8 +92,7 @@ export class CareCenterController {
     response.clearCookie('signup');
     response.cookie('accessToken', accessToken);
     response.setHeader('Access-Control-Allow-Credentials', 'true');
-
-    response.json({ result: true });
+    response.send(null);
   }
 
   @Get('/:careCenterId/care-worker')
@@ -106,8 +105,4 @@ export class CareCenterController {
 
     return careWorkers.map((c) => new CareWorkerResponse(c));
   }
-
-  @Get('')
-  @UseGuards(OnlyCareCenterGuard)
-  public async getMyCareCenter(@Req() request: Request) {}
 }

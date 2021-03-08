@@ -56,7 +56,7 @@ export class CareWorkerEntity {
   })
   public careCenterId: number;
 
-  @ManyToOne((type) => CareCenterEntity, (careCenter) => careCenter.careWorkers, {
+  @ManyToOne(() => CareCenterEntity, (careCenter) => careCenter.careWorkers, {
     nullable: false,
   })
   @JoinColumn({
