@@ -31,7 +31,7 @@ export class CareWorkerService {
     });
   }
 
-  public getCareWorkersByCareCenterId(careCenterId: number) {
+  public getCareWorkersByCareCenterId(careCenterId: string) {
     return this.careWorkerRepository.find({
       relations: ['careWorkerMetas', 'careWorkerSchedules'],
       where: {
@@ -40,7 +40,7 @@ export class CareWorkerService {
     });
   }
 
-  public async createCareWorker(careCenterId: number, careWorker: CreateWorkerRequest) {
+  public async createCareWorker(careCenterId: string, careWorker: CreateWorkerRequest) {
     const newCareWorker = this.careWorkerRepository.create({
       ...careWorker.basicWorkerState,
       careCenterId,
@@ -108,7 +108,7 @@ export class CareWorkerService {
     return targetWorker;
   }
 
-  public async updateCareWorker(careCenterId: number, careWorker: CreateWorkerRequest) {
+  public async updateCareWorker(careCenterId: string, careWorker: CreateWorkerRequest) {
     const targetWorker = await this.careWorkerRepository.findOne({
       where: {
         id: careWorker.id,
@@ -189,7 +189,7 @@ export class CareWorkerService {
     return targetWorker;
   }
 
-  public async isThisWorkerIsMine(myId: number, workerId: number) {
+  public async isThisWorkerIsMine(myId: string, workerId: string) {
     const worker = await this.careWorkerRepository.findOne({
       where: {
         id: workerId,
@@ -201,7 +201,7 @@ export class CareWorkerService {
     return worker.careCenterId === myId;
   }
 
-  public async deleteCareWorker(careWorkerId: number) {
+  public async deleteCareWorker(careWorkerId: string) {
     await this.deleteAllCurrentMetadataOfCareWorker(careWorkerId);
 
     return await this.careWorkerRepository.delete({ id: careWorkerId });
@@ -233,7 +233,7 @@ export class CareWorkerService {
     return careWorker;
   }
 
-  private async deleteAllCurrentMetadataOfCareWorker(careWorkerId: number) {
+  private async deleteAllCurrentMetadataOfCareWorker(careWorkerId: string) {
     await this.careWorkerMetaRepository.delete({
       careWorkerId,
     });

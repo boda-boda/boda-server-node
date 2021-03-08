@@ -5,8 +5,8 @@ import { Entity, Column, PrimaryGeneratedColumn, JoinColumn, ManyToOne, OneToMan
 
 @Entity('care-worker')
 export class CareWorkerEntity {
-  @PrimaryGeneratedColumn()
-  public id: number;
+  @PrimaryGeneratedColumn('uuid')
+  public id: string;
 
   @Column({
     type: 'varchar',
@@ -51,10 +51,10 @@ export class CareWorkerEntity {
   public description: string;
 
   @Column({
-    type: 'int',
+    type: 'varchar',
     nullable: false,
   })
-  public careCenterId: number;
+  public careCenterId: string;
 
   @ManyToOne(() => CareCenterEntity, (careCenter) => careCenter.careWorkers, {
     nullable: false,

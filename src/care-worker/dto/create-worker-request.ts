@@ -30,7 +30,7 @@ class BasicWorkerMeta {
   public description: string;
 
   @IsNotEmpty()
-  public careCenterId: number;
+  public careCenterId: string;
 }
 
 class ScheduleTableInfo {
@@ -44,7 +44,7 @@ class ScheduleTableInfo {
 }
 
 export default class CreateWorkerRequest {
-  public id: number;
+  public id: string;
 
   @ValidateNested()
   public basicWorkerState: BasicWorkerMeta;

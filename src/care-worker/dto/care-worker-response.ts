@@ -21,7 +21,7 @@ export default class CareWorkerResponse {
     this.careWorkerMetas = careWorkerEntity.careWorkerMetas;
   }
 
-  public id: number;
+  public id: string;
   public name: string;
   public gender: string;
   public age: number;
@@ -29,7 +29,7 @@ export default class CareWorkerResponse {
   public profile: string;
   public address: string;
   public description: string;
-  public careCenterId: number;
+  public careCenterId: string;
   public careCenter?: CareCenterResponse;
   public careWorkerMetas: CareWorkerMetaEntity[];
   public careWorkerSchedules: CareWorkerScheduleEntity[];

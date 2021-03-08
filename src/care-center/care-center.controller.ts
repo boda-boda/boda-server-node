@@ -99,7 +99,7 @@ export class CareCenterController {
   @Header('Cache-control', 'no-cache, no-store, must-revalidate')
   @UseGuards(OnlyAdminGuard)
   public async getCareWorkersByCareCenterId(
-    @Param('careCenterId', ValidateIdPipe) careCenterId: number,
+    @Param('careCenterId', ValidateIdPipe) careCenterId: string,
   ) {
     const careWorkers = await this.careWorkerService.getCareWorkersByCareCenterId(careCenterId);
 

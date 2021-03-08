@@ -11,7 +11,7 @@ export default class CareCenterResponse {
     this.description = careCenterEntity.description;
   }
 
-  public id: number;
+  public id: string;
   public type: string;
   public name: string;
   public username: string;

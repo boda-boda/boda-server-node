@@ -7,8 +7,14 @@ import { AppModule } from './app.module';
 
 dotenv.config();
 
+const corsOption = {
+  origin: ['http://localhost:3000', 'https://dolboda.kr', 'https://alpha.dolboda.kr'],
+  credentials: true,
+};
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.enableCors(corsOption);
   app.setGlobalPrefix('api');
 
   app.use(cookieParser());

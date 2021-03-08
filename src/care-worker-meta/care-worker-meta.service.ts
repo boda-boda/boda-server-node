@@ -10,7 +10,7 @@ export class CareWorkerMetaService {
     public readonly careWorkerMetaRepository: Repository<CareWorkerMetaEntity>,
   ) {}
 
-  public async deleteAllMetaDataOfCareWorker(careWorkerId: number) {
+  public async deleteAllMetaDataOfCareWorker(careWorkerId: string) {
     await this.careWorkerMetaRepository.delete({
       careWorkerId,
     });

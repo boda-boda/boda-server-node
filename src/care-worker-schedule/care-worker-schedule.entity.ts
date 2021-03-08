@@ -27,7 +27,7 @@ export class CareWorkerScheduleEntity {
     type: 'int',
     nullable: false,
   })
-  public careWorkerId: number;
+  public careWorkerId: string;
 
   @ManyToOne((type) => CareWorkerEntity, (careWorker) => careWorker.careWorkerSchedules, {
     nullable: false,

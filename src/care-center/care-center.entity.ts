@@ -1,10 +1,11 @@
 import { CareWorkerEntity } from 'src/care-worker/care-worker.entity';
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, Unique } from 'typeorm';
 
 @Entity('care-center')
+@Unique('UQ_NAME', ['name'])
 export class CareCenterEntity {
-  @PrimaryGeneratedColumn()
-  public id: number;
+  @PrimaryGeneratedColumn('uuid')
+  public id: string;
 
   @Column({
     type: 'varchar',

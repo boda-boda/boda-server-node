@@ -107,7 +107,7 @@ export class CareWorkerController {
   @Delete('/:id')
   @Header('Cache-control', 'no-cache, no-store, must-revalidate')
   @UseGuards(OnlyCareCenterGuard)
-  public async deleteCareWorker(@Req() request, @Param('id', ValidateIdPipe) id: number) {
+  public async deleteCareWorker(@Req() request, @Param('id') id: string) {
     if (!this.careWorkerService.isThisWorkerIsMine(request.careCenter.id, id)) {
       throw new UnauthorizedException('삭제 권한이 없습니다.');
     }
