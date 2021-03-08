@@ -23,6 +23,7 @@ import CreateCareCenterRequest from './dto/create-care-center-request.dto';
 import LoginRequestDTO from './dto/login-request.dto';
 import { CareCenterService } from './care-center.service';
 import { timer } from 'src/common/lib/time';
+import * as jwt from 'jsonwebtoken';
 
 @Controller('care-center')
 export class CareCenterController {
@@ -33,6 +34,7 @@ export class CareCenterController {
 
   @Post('login')
   @Header('Cache-control', 'no-cache, no-store, must-revalidate')
+  @Header('Access-Control-Allow-Credentials', 'true')
   public async login(@Body() { name, password }: LoginRequestDTO, @Res() response: Response) {
     const associatedCareCenter = await this.careCenterService.getCareCenterByName(name);
 
@@ -51,30 +53,71 @@ export class CareCenterController {
     }
 
     // 계정 연동이 된 경우
-
+    const refreshToken = this.careCenterService.createRefreshToken(associatedCareCenter);
     const accessToken = this.careCenterService.createAccessToken(associatedCareCenter);
 
     await timer(0.25);
 
-    response.cookie('accessToken', accessToken);
-    response.setHeader('Access-Control-Allow-Credentials', 'true');
-    response.setHeader('Cache-Control', ['no-cache', 'no-store', 'must-revalidate']);
-    response.send(null);
+    response.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+    });
+
+    response.json({
+      accessToken,
+      expiresIn: 3600,
+    });
   }
 
   @Post('logout')
   @Header('Cache-control', 'no-cache, no-store, must-revalidate')
-  @UseGuards(OnlyCareCenterGuard)
+  @Header('Access-Control-Allow-Credentials', 'true')
   public async logout(@Res() response: Response) {
-    response.clearCookie('accessToken');
+    response.clearCookie('refreshToken');
     response.setHeader('Access-Control-Allow-Credentials', 'true');
     response.send(null);
   }
 
+  @Post('refresh')
+  @Header('Cache-control', 'no-cache, no-store, must-revalidate')
+  @Header('Access-Control-Allow-Credentials', 'true')
+  public async refreshAccessToken(@Req() request: Request, @Res() response: Response) {
+    if (!request.cookies.refreshToken) {
+      throw new UnauthorizedException('인증되지 않은 사용자입니다.');
+    }
+
+    const refreshToken = request.cookies.refreshToken;
+
+    let careCenter = null;
+    try {
+      const { data }: any = jwt.verify(refreshToken, process.env.JWT_ACCESSTOKEN_SECRET);
+      careCenter = await this.careCenterService.getCareCenterById(data.id);
+      if (!careCenter) throw new UnauthorizedException('');
+    } catch (e) {
+      response.clearCookie('refreshToken');
+      throw new UnauthorizedException('');
+    }
+
+    // 우선 RefreshToken 자체는 업데이트하지 않을 계획. 1달에 1번씩 다시 로그인 시도는 해야 그래도 사용자 정보 보안 유지에 도움이 될 것
+    // const newRefreshToken = this.careCenterService.createRefreshToken(careCenter);
+    const accessToken = this.careCenterService.createAccessToken(careCenter);
+
+    await timer(0.25);
+
+    // 우선 RefreshToken 자체는 업데이트하지 않을 계획. 1달에 1번씩 다시 로그인 시도는 해야 그래도 사용자 정보 보안 유지에 도움이 될 것
+    // response.cookie('refreshToken', newRefreshToken, {
+    //   httpOnly: true,
+    // });
+
+    response.json({
+      accessToken,
+      expiresIn: 3600,
+    });
+  }
+
   @Post('create')
   @Header('Cache-control', 'no-cache, no-store, must-revalidate')
+  @Header('Access-Control-Allow-Credentials', 'true')
   public async create(
-    @Req() request: Request,
     @Res() response: Response,
     @Body() { name, password }: CreateCareCenterRequest,
   ) {
@@ -91,15 +134,16 @@ export class CareCenterController {
     }
 
     const accessToken = this.careCenterService.createAccessToken(result);
+    const refreshToken = this.careCenterService.createRefreshToken(result);
 
-    response.clearCookie('signup');
-    response.cookie('accessToken', accessToken);
-    response.setHeader('Access-Control-Allow-Credentials', 'true');
-    response.send(null);
+    response.cookie('refreshToken', refreshToken);
+    response.json({
+      accessToken,
+      expiresIn: 3600,
+    });
   }
 
   @Get('/:careCenterId/care-worker')
-  @Header('Cache-control', 'no-cache, no-store, must-revalidate')
   @UseGuards(OnlyAdminGuard)
   public async getCareWorkersByCareCenterId(
     @Param('careCenterId', ValidateIdPipe) careCenterId: string,

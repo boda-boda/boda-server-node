@@ -32,13 +32,27 @@ export class CareCenterService {
 
     const accessToken = jwt.sign(
       { data: careCenterResponseDTO, timestamp: Date.now() },
-      process.env.JWT_SECRET,
+      process.env.JWT_ACCESSTOKEN_SECRET,
       {
-        expiresIn: Number(process.env.JWT_EXPIRATION),
+        expiresIn: '1h',
       },
     );
 
     return accessToken;
+  }
+
+  public createRefreshToken(careCenterEntity: CareCenterEntity) {
+    const careCenterResponseDTO = new CareCenterResponse(careCenterEntity);
+
+    const refreshToken = jwt.sign(
+      { data: careCenterResponseDTO, timestamp: Date.now() },
+      process.env.JWT_ACCESSTOKEN_SECRET,
+      {
+        expiresIn: '30d',
+      },
+    );
+
+    return refreshToken;
   }
 
   public async checkPassword(careCenter: CareCenterEntity, password: string) {
