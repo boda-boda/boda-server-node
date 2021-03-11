@@ -24,17 +24,17 @@ export class CareCenterEntity {
 
   @Column({
     type: 'varchar',
-    length: 50,
-    nullable: true,
-  })
-  public username: string;
-
-  @Column({
-    type: 'varchar',
     length: 256,
     nullable: false,
   })
   public password: string;
+
+  @Column({
+    type: 'varchar',
+    length: 50,
+    nullable: true,
+  })
+  public username: string;
 
   @Column({
     type: 'varchar',
@@ -49,6 +49,36 @@ export class CareCenterEntity {
     nullable: true,
   })
   public profile: string;
+
+  @Column({
+    type: 'text',
+    nullable: true,
+  })
+  public homePage: string;
+
+  @Column({
+    type: 'text',
+    nullable: true,
+  })
+  public email: string;
+
+  @Column({
+    type: 'text',
+    nullable: true,
+  })
+  public zipCode: string;
+
+  @Column({
+    type: 'text',
+    nullable: true,
+  })
+  public address: string;
+
+  @Column({
+    type: 'text',
+    nullable: true,
+  })
+  public detailAddress: string;
 
   @Column({
     type: 'text',

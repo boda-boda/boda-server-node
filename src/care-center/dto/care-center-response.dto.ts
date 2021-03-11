@@ -8,6 +8,11 @@ export default class CareCenterResponse {
     this.username = careCenterEntity.username;
     this.phoneNumber = careCenterEntity.phoneNumber;
     this.profile = careCenterEntity.profile;
+    this.homePage = careCenterEntity.homePage;
+    this.email = careCenterEntity.email;
+    this.zipCode = careCenterEntity.zipCode;
+    this.address = careCenterEntity.address;
+    this.detailAddress = careCenterEntity.detailAddress;
     this.description = careCenterEntity.description;
   }
 
@@ -17,5 +22,10 @@ export default class CareCenterResponse {
   public username: string;
   public phoneNumber: string;
   public profile: string;
+  public homePage: string;
+  public email: string;
+  public zipCode: string;
+  public address: string;
+  public detailAddress: string;
   public description: string;
 }

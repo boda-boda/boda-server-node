@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CareCenterEntity } from './care-center.entity';
 import Bcrypt from 'src/common/lib/bcrypt';
 import CreateCareCenterRequest from './dto/create-care-center-request.dto';
+import LoginRequestDTO from './dto/login-request.dto';
 
 @Injectable()
 export class CareCenterService {
@@ -24,10 +25,7 @@ export class CareCenterService {
     return this.careCenterRepository.findOne({ where: { name } });
   }
 
-  public async createCareCenter({
-    name,
-    password,
-  }: CreateCareCenterRequest): Promise<CareCenterEntity> {
+  public async createCareCenter({ name, password }: LoginRequestDTO): Promise<CareCenterEntity> {
     const duplicateCareCenter = await this.careCenterRepository.findOne({
       where: {
         name,
@@ -50,5 +48,22 @@ export class CareCenterService {
     const CareCenter = this.careCenterRepository.create(updatedRequest);
     await this.careCenterRepository.save(CareCenter);
     return CareCenter;
+  }
+
+  public async updateCareCenter(careCenterId: string, careCenter: CreateCareCenterRequest) {
+    const targetCenter = await this.careCenterRepository.findOne({
+      where: {
+        id: careCenterId,
+      },
+    });
+
+    const updatedTargetWorker = this.careCenterRepository.merge(
+      targetCenter,
+      careCenter.basicCenterState,
+    );
+
+    const result = await this.careCenterRepository.save(updatedTargetWorker);
+
+    return result;
   }
 }

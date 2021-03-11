@@ -112,10 +112,7 @@ export class AuthController {
   @Post('create')
   @Header('Cache-control', 'no-cache, no-store, must-revalidate')
   @Header('Access-Control-Allow-Credentials', 'true')
-  public async create(
-    @Res() response: Response,
-    @Body() { name, password }: CreateCareCenterRequest,
-  ) {
+  public async create(@Res() response: Response, @Body() { name, password }: LoginRequestDTO) {
     const duplicateCareCenter = await this.careCenterService.getCareCenterByName(name);
 
     if (duplicateCareCenter) {
