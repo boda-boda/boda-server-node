@@ -45,7 +45,6 @@ export class CareWorkerService {
       ...careWorker.basicWorkerState,
       careCenterId,
     });
-    const testWorker = await this.careWorkerRepository.findOne({ where: { name: 'testworker12' } });
 
     const targetWorker = await this.careWorkerRepository.save(newCareWorker);
 

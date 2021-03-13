@@ -6,10 +6,16 @@ import {
   InternalServerErrorException,
   Param,
   Post,
+  Put,
   Req,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { Request } from 'express';
+import { CareCenterMetaService } from 'src/care-center-meta/care-center-meta.service';
+import CareCenterMetaResponse from 'src/care-center-meta/dto/care-center-response.dto';
 import { CareWorkerService } from 'src/care-worker/care-worker.service';
 import CareWorkerResponse from 'src/care-worker/dto/care-worker-response';
 import { OnlyAdminGuard } from 'src/common/guard/only-admin.guard';
@@ -25,6 +31,7 @@ export class CareCenterController {
   public constructor(
     private readonly careCenterService: CareCenterService,
     private readonly careWorkerService: CareWorkerService,
+    private readonly careCenterMetaService: CareCenterMetaService,
   ) {}
 
   @Get('/:careCenterId/care-worker')
@@ -37,14 +44,6 @@ export class CareCenterController {
     return careWorkers.map((c) => new CareWorkerResponse(c));
   }
 
-  @Get('hello')
-  public async getTest() {
-    const careCenter = await this.careCenterService.getCareCenterById(
-      '59fdb9bd-4e45-46e5-ac68-fcef3ad9b614',
-    );
-    return careCenter;
-  }
-
   @Get('/')
   @Header('Cache-control', 'no-cache, no-store, must-revalidate')
   @UseGuards(OnlyCareCenterGuard)
@@ -53,7 +52,7 @@ export class CareCenterController {
     return new CareCenterResponse(careCenter);
   }
 
-  @Post('/')
+  @Put('/')
   @Header('Cache-control', 'no-cache, no-store, must-revalidate')
   @UseGuards(OnlyCareCenterGuard)
   public async updateCareCenter(@Req() request: Request, @Body() body: CreateCareCenterRequest) {
@@ -73,10 +72,23 @@ export class CareCenterController {
       await queryRunner.release();
       throw e;
     }
+
     await queryRunner.release();
 
     const careCenter = await this.careCenterService.getCareCenterById(result.id);
 
     return new CareCenterResponse(careCenter);
+  }
+
+  @Post('/image')
+  @Header('Cache-control', 'no-cache, no-store, must-revalidate')
+  @UseGuards(OnlyCareCenterGuard)
+  @UseInterceptors(FileInterceptor('image'))
+  public async uploadCareCenterImage(@Req() request: Request, @UploadedFile() file) {
+    const careCenterMeta = await this.careCenterMetaService.uploadCareCenterImage(
+      request.careCenter.id,
+      file,
+    );
+    return new CareCenterMetaResponse(careCenterMeta);
   }
 }

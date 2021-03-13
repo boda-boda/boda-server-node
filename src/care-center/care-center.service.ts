@@ -15,6 +15,7 @@ export class CareCenterService {
 
   public getCareCenterById(id: string) {
     return this.careCenterRepository.findOne({
+      relations: ['careCenterMetas'],
       where: {
         id,
       },
@@ -57,12 +58,12 @@ export class CareCenterService {
       },
     });
 
-    const updatedTargetWorker = this.careCenterRepository.merge(
+    const updatedTargetCenter = this.careCenterRepository.merge(
       targetCenter,
       careCenter.basicCenterState,
     );
 
-    const result = await this.careCenterRepository.save(updatedTargetWorker);
+    const result = await this.careCenterRepository.save(updatedTargetCenter);
 
     return result;
   }

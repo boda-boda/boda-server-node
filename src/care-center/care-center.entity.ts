@@ -1,3 +1,4 @@
+import { CareCenterMetaEntity } from 'src/care-center-meta/care-center-meta.entity';
 import { CareWorkerEntity } from 'src/care-worker/care-worker.entity';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany, Unique } from 'typeorm';
 
@@ -88,4 +89,7 @@ export class CareCenterEntity {
 
   @OneToMany(() => CareWorkerEntity, (careWorker) => careWorker.careCenter)
   public careWorkers: CareWorkerEntity[];
+
+  @OneToMany(() => CareCenterMetaEntity, (careCenterMeta) => careCenterMeta.careCenter)
+  public careCenterMetas: CareCenterMetaEntity[];
 }
