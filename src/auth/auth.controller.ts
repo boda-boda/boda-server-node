@@ -17,6 +17,7 @@ import { timer } from 'src/common/lib/time';
 import { AuthService } from './auth.service';
 import * as jwt from 'jsonwebtoken';
 import CreateCareCenterRequest from 'src/care-center/dto/create-care-center-request.dto';
+import CareCenterResponse from 'src/care-center/dto/care-center-response.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -29,22 +30,22 @@ export class AuthController {
   @Header('Cache-control', 'no-cache, no-store, must-revalidate')
   @Header('Access-Control-Allow-Credentials', 'true')
   public async login(@Body() { name, password }: LoginRequestDTO, @Res() response: Response) {
-    const associatedCareCenter = await this.careCenterService.getCareCenterByName(name);
+    const careCenter = await this.careCenterService.getCareCenterByName(name);
 
     // 계정 연동이 되지 않은 경우
-    if (!associatedCareCenter) {
+    if (!careCenter) {
       throw new NotFoundException('해당 이름의 회원이 존재하지 않습니다.');
     }
 
-    const isPasswordCorrect = await this.authService.checkPassword(associatedCareCenter, password);
+    const isPasswordCorrect = await this.authService.checkPassword(careCenter, password);
 
     if (!isPasswordCorrect) {
       throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
     }
 
     // 계정 연동이 된 경우
-    const refreshToken = this.authService.createRefreshToken(associatedCareCenter);
-    const accessToken = this.authService.createAccessToken(associatedCareCenter);
+    const refreshToken = this.authService.createRefreshToken(careCenter);
+    const accessToken = this.authService.createAccessToken(careCenter);
 
     await timer(0.25);
 
@@ -55,6 +56,7 @@ export class AuthController {
     response.json({
       accessToken,
       expiresIn: 3600,
+      careCenter: new CareCenterResponse(careCenter),
     });
   }
 
@@ -72,7 +74,9 @@ export class AuthController {
   @Header('Access-Control-Allow-Credentials', 'true')
   public async refreshAccessToken(@Req() request: Request, @Res() response: Response) {
     if (!request.cookies.refreshToken) {
-      throw new UnauthorizedException('인증되지 않은 사용자입니다.');
+      // throw new UnauthorizedException('인증되지 않은 사용자입니다.');
+      // 에러를 던지는것 보단 silent 하게 진행하는게 좋아보임
+      return;
     }
 
     const refreshToken = request.cookies.refreshToken;
@@ -84,7 +88,7 @@ export class AuthController {
       if (!careCenter) throw new UnauthorizedException('');
     } catch (e) {
       response.clearCookie('refreshToken');
-      throw new UnauthorizedException('');
+      return;
     }
 
     // 우선 RefreshToken 자체는 업데이트하지 않을 계획. 1달에 1번씩 다시 로그인 시도는 해야 그래도 사용자 정보 보안 유지에 도움이 될 것
@@ -101,6 +105,7 @@ export class AuthController {
     response.json({
       accessToken,
       expiresIn: 3600,
+      careCenter: new CareCenterResponse(careCenter),
     });
   }
 
@@ -130,6 +135,7 @@ export class AuthController {
     response.json({
       accessToken,
       expiresIn: 3600,
+      careCenter: new CareCenterResponse(result),
     });
   }
 }

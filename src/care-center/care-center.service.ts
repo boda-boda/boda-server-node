@@ -12,7 +12,7 @@ export class CareCenterService {
     public readonly careCenterRepository: Repository<CareCenterEntity>,
   ) {}
 
-  public getCareCenterById(id: number) {
+  public getCareCenterById(id: string) {
     return this.careCenterRepository.findOne({
       where: {
         id,
