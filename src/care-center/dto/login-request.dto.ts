@@ -1,9 +1,9 @@
-import { IsString } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export default class LoginRequestDTO {
-  @IsString()
-  public name: string;
+  @IsNotEmpty()
+  public readonly name: string;
 
-  @IsString()
-  public password: string;
+  @IsNotEmpty()
+  public readonly password: string;
 }

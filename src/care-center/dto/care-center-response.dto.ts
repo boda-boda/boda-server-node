@@ -1,3 +1,5 @@
+import { CareCenterMetaEntity } from 'src/care-center-meta/care-center-meta.entity';
+import CareCenterMetaResponse from 'src/care-center-meta/dto/care-center-response.dto';
 import { CareCenterEntity } from '../care-center.entity';
 
 export default class CareCenterResponse {
@@ -8,7 +10,17 @@ export default class CareCenterResponse {
     this.username = careCenterEntity.username;
     this.phoneNumber = careCenterEntity.phoneNumber;
     this.profile = careCenterEntity.profile;
+    this.homePage = careCenterEntity.homePage;
+    this.email = careCenterEntity.email;
+    this.zipCode = careCenterEntity.zipCode;
+    this.address = careCenterEntity.address;
+    this.detailAddress = careCenterEntity.detailAddress;
     this.description = careCenterEntity.description;
+    this.careCenterMetas = careCenterEntity.careCenterMetas
+      ? careCenterEntity.careCenterMetas.map(
+          (careCenterMetas) => new CareCenterMetaResponse(careCenterMetas),
+        )
+      : [];
   }
 
   public id: string;
@@ -17,5 +29,11 @@ export default class CareCenterResponse {
   public username: string;
   public phoneNumber: string;
   public profile: string;
+  public homePage: string;
+  public email: string;
+  public zipCode: string;
+  public address: string;
+  public detailAddress: string;
   public description: string;
+  public careCenterMetas: CareCenterMetaResponse[];
 }

@@ -1,7 +1,7 @@
-import { CareWorkerMetaEntity } from 'src/care-worker-meta/care-worker-meta.entity';
-import { CareWorkerScheduleEntity } from 'src/care-worker-schedule/care-worker-schedule.entity';
 import CareCenterResponse from 'src/care-center/dto/care-center-response.dto';
 import { CareWorkerEntity } from '../care-worker.entity';
+import CareWorkerScheduleResponse from './care-worker-schedule-response';
+import CareWorkerMetaResponse from 'src/care-worker-meta/dto/care-worker-meta-response';
 
 export default class CareWorkerResponse {
   public constructor(careWorkerEntity: CareWorkerEntity) {
@@ -17,8 +17,16 @@ export default class CareWorkerResponse {
     this.careCenter = careWorkerEntity.careCenter
       ? new CareCenterResponse(careWorkerEntity.careCenter)
       : null;
-    this.careWorkerSchedules = careWorkerEntity.careWorkerSchedules;
-    this.careWorkerMetas = careWorkerEntity.careWorkerMetas;
+    this.careWorkerSchedules = careWorkerEntity.careWorkerSchedules
+      ? careWorkerEntity.careWorkerSchedules.map(
+          (careWorkerSchedule) => new CareWorkerScheduleResponse(careWorkerSchedule),
+        )
+      : [];
+    this.careWorkerMetas = careWorkerEntity.careWorkerMetas
+      ? careWorkerEntity.careWorkerMetas.map(
+          (careWorkerMeta) => new CareWorkerMetaResponse(careWorkerMeta),
+        )
+      : [];
   }
 
   public id: string;
@@ -31,6 +39,6 @@ export default class CareWorkerResponse {
   public description: string;
   public careCenterId: string;
   public careCenter?: CareCenterResponse;
-  public careWorkerMetas: CareWorkerMetaEntity[];
-  public careWorkerSchedules: CareWorkerScheduleEntity[];
+  public careWorkerMetas: CareWorkerMetaResponse[];
+  public careWorkerSchedules: CareWorkerScheduleResponse[];
 }

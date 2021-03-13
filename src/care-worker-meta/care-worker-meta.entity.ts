@@ -30,7 +30,7 @@ export class CareWorkerMetaEntity {
   })
   public careWorkerId: string;
 
-  @ManyToOne((type) => CareWorkerEntity, (careWorker) => careWorker.careWorkerSchedules, {
+  @ManyToOne(() => CareWorkerEntity, (careWorker) => careWorker.careWorkerSchedules, {
     nullable: false,
   })
   @JoinColumn({

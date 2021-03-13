@@ -45,6 +45,7 @@ export class CareWorkerService {
       ...careWorker.basicWorkerState,
       careCenterId,
     });
+
     const targetWorker = await this.careWorkerRepository.save(newCareWorker);
 
     const regionMeta = careWorker.regions.map((k) => {
@@ -105,11 +106,9 @@ export class CareWorkerService {
         id: careWorker.id,
       },
     });
-
     if (targetWorker.careCenterId !== careCenterId) {
       throw new UnauthorizedException('권한이 없습니다.');
     }
-
     const updatedTargetWorker = this.careWorkerRepository.merge(
       targetWorker,
       careWorker.basicWorkerState,
