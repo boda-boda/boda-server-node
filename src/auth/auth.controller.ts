@@ -16,7 +16,6 @@ import LoginRequestDTO from 'src/care-center/dto/login-request.dto';
 import { timer } from 'src/common/lib/time';
 import { AuthService } from './auth.service';
 import * as jwt from 'jsonwebtoken';
-import CreateCareCenterRequest from 'src/care-center/dto/create-care-center-request.dto';
 import CareCenterResponse from 'src/care-center/dto/care-center-response.dto';
 
 @Controller('auth')
@@ -55,7 +54,7 @@ export class AuthController {
 
     response.json({
       accessToken,
-      expiresIn: 3600,
+      expiresIn: 60,
       careCenter: new CareCenterResponse(careCenter),
     });
   }
@@ -74,8 +73,9 @@ export class AuthController {
   @Header('Access-Control-Allow-Credentials', 'true')
   public async refreshAccessToken(@Req() request: Request, @Res() response: Response) {
     if (!request.cookies.refreshToken) {
-      // throw new UnauthorizedException('인증되지 않은 사용자입니다.');
-      // 에러를 던지는것 보단 silent 하게 진행하는게 좋아보임
+      response.json({
+        statusCode: 400, // Bad Request
+      });
       return;
     }
 
@@ -88,23 +88,22 @@ export class AuthController {
       if (!careCenter) throw new UnauthorizedException('');
     } catch (e) {
       response.clearCookie('refreshToken');
+      response.json({
+        statusCode: 401, // Unauthorized
+      });
       return;
     }
 
-    // 우선 RefreshToken 자체는 업데이트하지 않을 계획. 1달에 1번씩 다시 로그인 시도는 해야 그래도 사용자 정보 보안 유지에 도움이 될 것
-    // const newRefreshToken = this.authService.createRefreshToken(careCenter);
     const accessToken = this.authService.createAccessToken(careCenter);
 
-    await timer(0.25);
+    await timer(0.25); // 브루트포스 방지를 위한 로그인 지연 설정
 
     // 우선 RefreshToken 자체는 업데이트하지 않을 계획. 1달에 1번씩 다시 로그인 시도는 해야 그래도 사용자 정보 보안 유지에 도움이 될 것
-    // response.cookie('refreshToken', newRefreshToken, {
-    //   httpOnly: true,
-    // });
 
     response.json({
+      statusCode: 201, // CREATED
       accessToken,
-      expiresIn: 3600,
+      expiresIn: 60,
       careCenter: new CareCenterResponse(careCenter),
     });
   }
@@ -131,7 +130,7 @@ export class AuthController {
     response.cookie('refreshToken', refreshToken);
     response.json({
       accessToken,
-      expiresIn: 3600,
+      expiresIn: 60,
       careCenter: new CareCenterResponse(result),
     });
   }
