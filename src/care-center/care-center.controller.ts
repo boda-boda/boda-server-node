@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Header,
   InternalServerErrorException,
@@ -24,7 +25,7 @@ import { ValidateIdPipe } from 'src/common/pipe/validate-id.pipe';
 import { getConnection } from 'typeorm';
 import { CareCenterService } from './care-center.service';
 import CareCenterResponse from './dto/care-center-response.dto';
-import CreateCareCenterRequest from './dto/create-care-center-request.dto';
+import UpdateCareCenterRequest from './dto/update-care-center-request.dto';
 
 @Controller('care-center')
 export class CareCenterController {
@@ -55,7 +56,7 @@ export class CareCenterController {
   @Put('/')
   @Header('Cache-control', 'no-cache, no-store, must-revalidate')
   @UseGuards(OnlyCareCenterGuard)
-  public async updateCareCenter(@Req() request: Request, @Body() body: CreateCareCenterRequest) {
+  public async updateCareCenter(@Req() request: Request, @Body() body: UpdateCareCenterRequest) {
     if (!request.careCenter.id) {
       throw new InternalServerErrorException('JWT가 이상합니다.');
     }
@@ -90,5 +91,14 @@ export class CareCenterController {
       file,
     );
     return new CareCenterMetaResponse(careCenterMeta);
+  }
+
+  @Delete('/image/:id')
+  @UseGuards(OnlyCareCenterGuard)
+  public async deleteCareCenterImage(
+    @Req() request: Request,
+    @Param('id', ValidateIdPipe) id: number,
+  ) {
+    await this.careCenterMetaService.deleteCareCenterMetaByMetaId(request.careCenter.id, id);
   }
 }

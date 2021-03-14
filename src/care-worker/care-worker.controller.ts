@@ -15,9 +15,6 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Request } from 'express';
-import { CareWorkerMetaService } from 'src/care-worker-meta/care-worker-meta.service';
-import { CareWorkerScheduleService } from 'src/care-worker-schedule/care-worker-schedule.service';
-import { OnlyAdminGuard } from 'src/common/guard/only-admin.guard';
 import { OnlyCareCenterGuard } from 'src/common/guard/only-care-center.guard';
 import { ValidateIdPipe } from 'src/common/pipe/validate-id.pipe';
 import { getConnection } from 'typeorm';
@@ -27,11 +24,7 @@ import CreateWorkerRequest from './dto/create-worker-request';
 
 @Controller('care-worker')
 export class CareWorkerController {
-  public constructor(
-    private readonly careWorkerService: CareWorkerService,
-    private readonly careWorkerMetaService: CareWorkerMetaService,
-    private readonly careWorkerScheduleService: CareWorkerScheduleService,
-  ) {}
+  public constructor(private readonly careWorkerService: CareWorkerService) {}
 
   @Get('/:id')
   @Header('Cache-control', 'no-cache, no-store, must-revalidate')
@@ -52,7 +45,7 @@ export class CareWorkerController {
 
   @Post('/profile')
   @Header('Cache-control', 'no-cache, no-store, must-revalidate')
-  @UseGuards(OnlyAdminGuard)
+  @UseGuards(OnlyCareCenterGuard)
   @UseInterceptors(FileInterceptor('image'))
   public async uploadImage(@UploadedFile() file) {
     return await this.careWorkerService.uploadImage(file);

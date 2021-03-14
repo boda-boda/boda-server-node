@@ -12,6 +12,17 @@ export class CareCenterMetaService {
     public readonly careCenterMetaRepository: Repository<CareCenterMetaEntity>,
   ) {}
 
+  public async deleteCareCenterMetaByMetaId(careCenterId: string, id: number) {
+    const targetCareCenterMeta = await this.careCenterMetaRepository.findOne({
+      where: {
+        id,
+        careCenterId,
+      },
+    });
+
+    await this.careCenterMetaRepository.delete(targetCareCenterMeta);
+  }
+
   public async uploadCareCenterImage(careCenterId: string, file: any) {
     const newCareCenterMeta = this.careCenterMetaRepository.create({
       careCenterId,

@@ -3,7 +3,7 @@ import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CareCenterEntity } from './care-center.entity';
 import Bcrypt from 'src/common/lib/bcrypt';
-import CreateCareCenterRequest from './dto/create-care-center-request.dto';
+import UpdateCareCenterRequest from './dto/update-care-center-request.dto';
 import LoginRequestDTO from './dto/login-request.dto';
 
 @Injectable()
@@ -51,17 +51,14 @@ export class CareCenterService {
     return CareCenter;
   }
 
-  public async updateCareCenter(careCenterId: string, careCenter: CreateCareCenterRequest) {
+  public async updateCareCenter(careCenterId: string, careCenter: UpdateCareCenterRequest) {
     const targetCenter = await this.careCenterRepository.findOne({
       where: {
         id: careCenterId,
       },
     });
 
-    const updatedTargetCenter = this.careCenterRepository.merge(
-      targetCenter,
-      careCenter.basicCenterState,
-    );
+    const updatedTargetCenter = this.careCenterRepository.merge(targetCenter, careCenter);
 
     const result = await this.careCenterRepository.save(updatedTargetCenter);
 
