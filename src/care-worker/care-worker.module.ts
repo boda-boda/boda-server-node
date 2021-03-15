@@ -7,11 +7,15 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CareWorkerEntity } from './care-worker.entity';
 import { CareWorkerMetaEntity } from 'src/care-worker-meta/care-worker-meta.entity';
 import { CareWorkerScheduleEntity } from 'src/care-worker-schedule/care-worker-schedule.entity';
+import { CareWorkerAreaModule } from 'src/care-worker-area/care-worker-area.module';
+import { CareWorkerCareerModule } from 'src/care-worker-career/care-worker-career.module';
 
 @Module({
   imports: [
     CareWorkerMetaModule,
     CareWorkerScheduleModule,
+    CareWorkerAreaModule,
+    CareWorkerCareerModule,
     TypeOrmModule.forFeature([CareWorkerEntity, CareWorkerMetaEntity, CareWorkerScheduleEntity]),
   ],
   controllers: [CareWorkerController],

@@ -1,31 +1,30 @@
 import { CareWorkerEntity } from 'src/care-worker/care-worker.entity';
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity('care-worker-meta')
-export class CareWorkerMetaEntity {
+@Entity('care-worker-career')
+export class CareWorkerCareerEntity {
   @PrimaryGeneratedColumn()
   public id: number;
 
   @Column({
     type: 'varchar',
-    length: 50,
-    nullable: false,
-  })
-  public type: string;
-
-  @Column({
-    type: 'text',
-  })
-  public key: string;
-
-  @Column({
-    type: 'text',
     nullable: true,
   })
-  public value: string;
+  public workplace: string;
 
   @Column({
     type: 'varchar',
+    nullable: true,
+  })
+  public recepient: string;
+
+  @Column({
+    type: 'varchar',
+    nullable: true,
+  })
+  public duration: string;
+
+  @Column({
     nullable: false,
   })
   public careWorkerId: string;

@@ -1,86 +1,78 @@
 import { Type } from 'class-transformer';
-import { IsArray, IsBoolean, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
+import {
+  IsArray,
+  IsBoolean,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
 
-class KeyPair {
-  @IsNotEmpty()
-  public key: string;
-
-  public value: string;
-}
-
-class BasicWorkerMeta {
+class CareWorkerRequest {
   @IsNotEmpty()
   public name: string;
 
-  @IsBoolean()
   public isFemale: boolean;
 
-  @IsNotEmpty()
   public age: number;
 
-  @IsNotEmpty()
   public phoneNumber: string;
 
-  @IsNotEmpty()
   public profile: string;
 
-  @IsNotEmpty()
   public address: string;
 
-  @IsNotEmpty()
   public description: string;
-
-  @IsNotEmpty()
-  public careCenterId: string;
 }
 
-class ScheduleTableInfo {
-  @IsArray({ each: true })
-  public Mon: string[][];
+class CareWorkerCareerRequest {
+  public place: string;
 
-  @IsArray({ each: true })
-  public Tue: string[][];
+  public customer: string;
 
-  @IsArray({ each: true })
-  public Wed: string[][];
-
-  @IsArray({ each: true })
-  public Thu: string[][];
-
-  @IsArray({ each: true })
-  public Fri: string[][];
-
-  @IsArray({ each: true })
-  public Sat: string[][];
-
-  @IsArray({ each: true })
-  public Sun: string[][];
+  public duration: string;
 }
 
-export default class CreateWorkerRequest {
+class CareWorkerAreaRequest {
+  public city: string;
+
+  public gu: string;
+
+  public dong: string;
+}
+
+export class CareWorkerScheduleRequest {
+  public days: string[];
+
+  public startHour: number;
+
+  public startMinute: number;
+
+  public endHour: number;
+
+  public endMinute: number;
+}
+
+export class CreateWorkerRequest {
   public id: string;
 
   @ValidateNested({ each: true })
-  @Type(() => BasicWorkerMeta)
+  @Type(() => CareWorkerRequest)
   @IsNotEmpty()
-  public basicWorkerState: BasicWorkerMeta;
-
-  @ValidateNested({ each: true })
-  @Type(() => KeyPair)
-  @IsNotEmpty()
-  public capableKeyPair: KeyPair[];
-
-  @ValidateNested({ each: true })
-  @Type(() => KeyPair)
-  @IsNotEmpty()
-  public careerKeyPair: KeyPair[];
-
-  @ValidateNested({ each: true })
-  @Type(() => ScheduleTableInfo)
-  @IsNotEmpty()
-  public scheduleTableInfo: ScheduleTableInfo;
+  public careWorker: CareWorkerRequest;
 
   @IsString({ each: true })
-  @IsNotEmpty()
-  public regions: string[];
+  public careWorkerCapabilities: string[];
+
+  @ValidateNested({ each: true })
+  @Type(() => CareWorkerScheduleRequest)
+  public careWorkerSchedules: CareWorkerScheduleRequest[];
+
+  @ValidateNested({ each: true })
+  @Type(() => CareWorkerCareerRequest)
+  public careWorkerCareers: CareWorkerCareerRequest[];
+
+  @ValidateNested({ each: true })
+  @Type(() => CareWorkerAreaRequest)
+  public careWorkerAreas: CareWorkerAreaRequest[];
 }

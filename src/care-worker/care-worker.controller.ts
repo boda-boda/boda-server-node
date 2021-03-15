@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -20,7 +21,7 @@ import { ValidateIdPipe } from 'src/common/pipe/validate-id.pipe';
 import { getConnection } from 'typeorm';
 import { CareWorkerService } from './care-worker.service';
 import CareWorkerResponse from './dto/care-worker-response';
-import CreateWorkerRequest from './dto/create-worker-request';
+import { CareWorkerScheduleRequest, CreateWorkerRequest } from './dto/create-worker-request';
 
 @Controller('care-worker')
 export class CareWorkerController {
@@ -69,9 +70,16 @@ export class CareWorkerController {
   @Post('/')
   @Header('Cache-control', 'no-cache, no-store, must-revalidate')
   @UseGuards(OnlyCareCenterGuard)
-  public async upsertCareWorker(@Req() request: Request, @Body() body: CreateWorkerRequest) {
+  public async upsertCareWorker(
+    @Req() request: Request,
+    @Body() createWorkerRequest: CreateWorkerRequest,
+  ) {
     if (!request.careCenter.id) {
       throw new InternalServerErrorException('JWT가 이상합니다.');
+    }
+
+    if (!this.isValidCareWorkerSchledule(createWorkerRequest.careWorkerSchedules)) {
+      throw new BadRequestException('스케줄 양식이 올바르지 않습니다.');
     }
 
     const queryRunner = getConnection().createQueryRunner();
@@ -79,11 +87,17 @@ export class CareWorkerController {
 
     let result;
     try {
-      if (!body.id) {
+      if (!createWorkerRequest.id) {
         //insert
-        result = await this.careWorkerService.createCareWorker(request.careCenter.id, body);
+        result = await this.careWorkerService.createCareWorker(
+          request.careCenter.id,
+          createWorkerRequest,
+        );
       } else {
-        result = await this.careWorkerService.updateCareWorker(request.careCenter.id, body);
+        result = await this.careWorkerService.updateCareWorker(
+          request.careCenter.id,
+          createWorkerRequest,
+        );
       }
       await queryRunner.commitTransaction();
     } catch (e) {
@@ -109,5 +123,18 @@ export class CareWorkerController {
     await this.careWorkerService.deleteCareWorker(id);
 
     return;
+  }
+
+  private isValidCareWorkerSchledule(schedules: CareWorkerScheduleRequest[]) {
+    return schedules.every((schedule) => {
+      if (schedule.days.length === 0) return false;
+
+      if (schedule.startHour > schedule.endHour) return false;
+      if (schedule.endHour === schedule.startHour) {
+        if (schedule.startMinute >= schedule.endMinute) return false;
+      }
+
+      return true;
+    });
   }
 }

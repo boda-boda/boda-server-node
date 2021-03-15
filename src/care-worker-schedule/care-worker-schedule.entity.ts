@@ -24,12 +24,12 @@ export class CareWorkerScheduleEntity {
   public endAt: string;
 
   @Column({
-    type: 'int',
+    type: 'varchar',
     nullable: false,
   })
   public careWorkerId: string;
 
-  @ManyToOne((type) => CareWorkerEntity, (careWorker) => careWorker.careWorkerSchedules, {
+  @ManyToOne(() => CareWorkerEntity, (careWorker) => careWorker.careWorkerSchedules, {
     nullable: false,
   })
   @JoinColumn({

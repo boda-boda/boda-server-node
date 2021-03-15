@@ -1,6 +1,7 @@
 import { CareWorkerMetaEntity } from 'src/care-worker-meta/care-worker-meta.entity';
 import { CareWorkerScheduleEntity } from 'src/care-worker-schedule/care-worker-schedule.entity';
 import { CareCenterEntity } from 'src/care-center/care-center.entity';
+import { CareWorkerAreaEntity } from 'src/care-worker-area/care-worker-area.entity';
 import { Entity, Column, PrimaryGeneratedColumn, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 
 @Entity('care-worker')
@@ -70,4 +71,7 @@ export class CareWorkerEntity {
 
   @OneToMany(() => CareWorkerScheduleEntity, (careWorkerSchedule) => careWorkerSchedule.careWorker)
   public careWorkerSchedules: CareWorkerScheduleEntity[];
+
+  @OneToMany(() => CareWorkerAreaEntity, (careWorkerArea) => careWorkerArea.careWorker)
+  public careWorkerAreas: CareWorkerAreaEntity[];
 }

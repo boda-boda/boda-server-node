@@ -5,13 +5,22 @@ import { CareWorkerScheduleEntity } from 'src/care-worker-schedule/care-worker-s
 import { CAPABILITY, CAREER, REGION } from 'src/constant';
 import { Repository } from 'typeorm';
 import { CareWorkerEntity } from './care-worker.entity';
-import CreateWorkerRequest from './dto/create-worker-request';
+import { CreateWorkerRequest } from './dto/create-worker-request';
 import * as AWS from 'aws-sdk';
 import { v4 } from 'uuid';
+import { CareWorkerCareerService } from 'src/care-worker-career/care-worker-career.service';
+import { CareWorkerAreaService } from 'src/care-worker-area/care-worker-area.service';
+import { CareWorkerMetaService } from 'src/care-worker-meta/care-worker-meta.service';
+import { CareWorkerScheduleService } from 'src/care-worker-schedule/care-worker-schedule.service';
 
 @Injectable()
 export class CareWorkerService {
   public constructor(
+    public readonly careWorkerAreaService: CareWorkerAreaService,
+    public readonly careWorkerCareerService: CareWorkerCareerService,
+    public readonly careWorkerMetaService: CareWorkerMetaService,
+    public readonly careWorkerScheduleService: CareWorkerScheduleService,
+
     @InjectRepository(CareWorkerEntity)
     public readonly careWorkerRepository: Repository<CareWorkerEntity>,
 
@@ -40,132 +49,75 @@ export class CareWorkerService {
     });
   }
 
-  public async createCareWorker(careCenterId: string, careWorker: CreateWorkerRequest) {
+  public async createCareWorker(careCenterId: string, careWorkerRequest: CreateWorkerRequest) {
     const newCareWorker = this.careWorkerRepository.create({
-      ...careWorker.basicWorkerState,
+      ...careWorkerRequest.careWorker,
       careCenterId,
     });
-
     const targetWorker = await this.careWorkerRepository.save(newCareWorker);
 
-    const regionMeta = careWorker.regions.map((k) => {
-      return {
-        type: REGION,
-        key: k,
-        careWorkerId: targetWorker.id,
-      };
+    const capabilityMeta = careWorkerRequest.careWorkerCapabilities.map((key) => {
+      return { type: CAPABILITY, key, careWorkerId: targetWorker.id };
     });
 
-    const capabilityMeta = careWorker.capableKeyPair.map((k) => {
-      return {
-        type: CAPABILITY,
-        key: k.key,
-        value: k.value,
-        careWorkerId: targetWorker.id,
-      };
-    });
+    await this.careWorkerMetaService.createCareWorkerMeta(capabilityMeta);
 
-    const careerMeta = careWorker.careerKeyPair.map((k) => {
-      return {
-        type: CAREER,
-        key: k.key,
-        value: k.value,
-        careWorkerId: targetWorker.id,
-      };
-    });
+    await this.careWorkerScheduleService.createCareWorkerSchedule(
+      careWorkerRequest.careWorkerSchedules,
+      targetWorker.id,
+    );
 
-    const allMetaEntity = this.careWorkerMetaRepository.create([
-      ...capabilityMeta,
-      ...careerMeta,
-      ...regionMeta,
-    ]);
-
-    const scheduleMeta = Object.keys(careWorker.scheduleTableInfo).reduce((acc, val) => {
-      const schedules = careWorker.scheduleTableInfo[val];
-      const newMeta = schedules.map((s) => {
-        return {
-          day: val,
-          startAt: s[0],
-          endAt: s[1],
-          careWorkerId: targetWorker.id,
-        };
-      });
-      return [...acc, ...newMeta];
-    }, []);
-
-    const scheduleMetaEntity = this.careWorkerScheduleRepository.create(scheduleMeta);
-    await this.careWorkerMetaRepository.save(allMetaEntity);
-    await this.careWorkerScheduleRepository.save(scheduleMetaEntity);
+    await this.careWorkerCareerService.createCareWorkerCareer(
+      careWorkerRequest.careWorkerCareers,
+      targetWorker.id,
+    );
+    await this.careWorkerAreaService.createAreaOfCareWorker(
+      careWorkerRequest.careWorkerAreas,
+      targetWorker.id,
+    );
 
     return targetWorker;
   }
 
-  public async updateCareWorker(careCenterId: string, careWorker: CreateWorkerRequest) {
+  public async updateCareWorker(careCenterId: string, careWorkerRequest: CreateWorkerRequest) {
     const targetWorker = await this.careWorkerRepository.findOne({
       where: {
-        id: careWorker.id,
+        id: careWorkerRequest.id,
       },
     });
+
     if (targetWorker.careCenterId !== careCenterId) {
       throw new UnauthorizedException('권한이 없습니다.');
     }
+
     const updatedTargetWorker = this.careWorkerRepository.merge(
       targetWorker,
-      careWorker.basicWorkerState,
+      careWorkerRequest.careWorker,
     );
 
-    const result = await this.careWorkerRepository.save(updatedTargetWorker);
+    await this.careWorkerRepository.save(updatedTargetWorker);
 
-    await this.deleteAllCurrentMetadataOfCareWorker(careWorker.id);
+    await this.deleteAllCurrentMetadataOfCareWorker(careWorkerRequest.id);
 
-    const regionMeta = careWorker.regions.map((k) => {
-      return {
-        type: REGION,
-        key: k,
-        careWorkerId: targetWorker.id,
-      };
+    const capabilityMeta = careWorkerRequest.careWorkerCapabilities.map((key) => {
+      return { type: CAPABILITY, key, careWorkerId: targetWorker.id };
     });
+    await this.careWorkerMetaService.createCareWorkerMeta(capabilityMeta);
 
-    const capabilityMeta = careWorker.capableKeyPair.map((k) => {
-      return {
-        type: CAPABILITY,
-        key: k.key,
-        value: k.value,
-        careWorkerId: careWorker.id,
-      };
-    });
+    await this.careWorkerScheduleService.createCareWorkerSchedule(
+      careWorkerRequest.careWorkerSchedules,
+      targetWorker.id,
+    );
 
-    const careerMeta = careWorker.careerKeyPair.map((k) => {
-      return {
-        type: CAREER,
-        key: k.key,
-        value: k.value,
-        careWorkerId: careWorker.id,
-      };
-    });
+    await this.careWorkerCareerService.createCareWorkerCareer(
+      careWorkerRequest.careWorkerCareers,
+      targetWorker.id,
+    );
 
-    const allMetaEntity = this.careWorkerMetaRepository.create([
-      ...capabilityMeta,
-      ...careerMeta,
-      ...regionMeta,
-    ]);
-
-    const scheduleMeta = Object.keys(careWorker.scheduleTableInfo).reduce((acc, val) => {
-      const schedules = careWorker.scheduleTableInfo[val];
-      const newMeta = schedules.map((s) => {
-        return {
-          day: val,
-          startAt: s[0],
-          endAt: s[1],
-          careWorkerId: careWorker.id,
-        };
-      });
-      return [...acc, ...newMeta];
-    }, []);
-
-    const scheduleMetaEntity = this.careWorkerScheduleRepository.create(scheduleMeta);
-    await this.careWorkerMetaRepository.save(allMetaEntity);
-    await this.careWorkerScheduleRepository.save(scheduleMetaEntity);
+    await this.careWorkerAreaService.createAreaOfCareWorker(
+      careWorkerRequest.careWorkerAreas,
+      targetWorker.id,
+    );
 
     return targetWorker;
   }
@@ -215,13 +167,10 @@ export class CareWorkerService {
   }
 
   private async deleteAllCurrentMetadataOfCareWorker(careWorkerId: string) {
-    await this.careWorkerMetaRepository.delete({
-      careWorkerId,
-    });
-
-    await this.careWorkerScheduleRepository.delete({
-      careWorkerId,
-    });
+    await this.careWorkerMetaService.deleteAllMetaDataOfCareWorker(careWorkerId);
+    await this.careWorkerAreaService.deleteAllAreaOfCareWorker(careWorkerId);
+    await this.careWorkerScheduleService.deleteAllScheduleOfCareWorker(careWorkerId);
+    await this.careWorkerCareerService.deleteAllCareerOfCareWorker(careWorkerId);
   }
 
   async uploadS3(file, bucket, name) {

@@ -10,6 +10,8 @@ import { DeserializeCareCenterMiddleWare } from './common/middleware/deserialize
 import { CareCenterMetaModule } from './care-center-meta/care-center-meta.module';
 import { ConsultModule } from './consult/consult.module';
 import { AuthModule } from './auth/auth.module';
+import { CareWorkerAreaModule } from './care-worker-area/care-worker-area.module';
+import { CareWorkerCareerModule } from './care-worker-career/care-worker-career.module';
 
 @Module({
   imports: [
@@ -21,6 +23,8 @@ import { AuthModule } from './auth/auth.module';
     CareCenterMetaModule,
     ConsultModule,
     AuthModule,
+    CareWorkerAreaModule,
+    CareWorkerCareerModule,
   ],
   controllers: [AppController],
   providers: [AppService],
