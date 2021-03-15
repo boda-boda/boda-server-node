@@ -27,15 +27,6 @@ import { CareWorkerScheduleRequest, CreateWorkerRequest } from './dto/create-wor
 export class CareWorkerController {
   public constructor(private readonly careWorkerService: CareWorkerService) {}
 
-  @Get('/:id')
-  @Header('Cache-control', 'no-cache, no-store, must-revalidate')
-  @UseGuards(OnlyCareCenterGuard)
-  public async getCareWorkerDetail(@Param('id', ValidateIdPipe) id: number) {
-    const careWorker = await this.careWorkerService.getCareWorkerById(id);
-
-    return new CareWorkerResponse(careWorker);
-  }
-
   @Post('/:id/profile')
   @Header('Cache-control', 'no-cache, no-store, must-revalidate')
   @UseGuards(OnlyCareCenterGuard)
@@ -65,6 +56,15 @@ export class CareWorkerController {
     );
 
     return careWorkers.map((c) => new CareWorkerResponse(c));
+  }
+
+  @Get('/:id')
+  @Header('Cache-control', 'no-cache, no-store, must-revalidate')
+  @UseGuards(OnlyCareCenterGuard)
+  public async getCareWorkerDetail(@Param('id', ValidateIdPipe) id: number) {
+    const careWorker = await this.careWorkerService.getCareWorkerById(id);
+
+    return new CareWorkerResponse(careWorker);
   }
 
   @Post('/')

@@ -1,8 +1,6 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CareWorkerMetaEntity } from 'src/care-worker-meta/care-worker-meta.entity';
-import { CareWorkerScheduleEntity } from 'src/care-worker-schedule/care-worker-schedule.entity';
-import { CAPABILITY, CAREER, REGION } from 'src/constant';
+import { CAPABILITY } from 'src/constant';
 import { Repository } from 'typeorm';
 import { CareWorkerEntity } from './care-worker.entity';
 import { CreateWorkerRequest } from './dto/create-worker-request';
@@ -23,28 +21,24 @@ export class CareWorkerService {
 
     @InjectRepository(CareWorkerEntity)
     public readonly careWorkerRepository: Repository<CareWorkerEntity>,
-
-    @InjectRepository(CareWorkerMetaEntity)
-    public readonly careWorkerMetaRepository: Repository<CareWorkerMetaEntity>,
-
-    @InjectRepository(CareWorkerScheduleEntity)
-    public readonly careWorkerScheduleRepository: Repository<CareWorkerScheduleEntity>,
   ) {}
 
   public getCareWorkerById(id: number) {
     return this.careWorkerRepository.findOne({
-      relations: ['careWorkerMetas', 'careWorkerSchedules'],
+      relations: ['careWorkerMetas', 'careWorkerSchedules', 'careWorkerAreas', 'careWorkerCareers'],
       where: {
         id,
+        isDeleted: false,
       },
     });
   }
 
   public getCareWorkersByCareCenterId(careCenterId: string) {
     return this.careWorkerRepository.find({
-      relations: ['careWorkerMetas', 'careWorkerSchedules'],
+      relations: ['careWorkerMetas', 'careWorkerSchedules', 'careWorkerAreas', 'careWorkerCareers'],
       where: {
         careCenterId,
+        isDeleted: false,
       },
     });
   }

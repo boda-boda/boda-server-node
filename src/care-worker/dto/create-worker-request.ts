@@ -1,12 +1,5 @@
 import { Type } from 'class-transformer';
-import {
-  IsArray,
-  IsBoolean,
-  IsNotEmpty,
-  IsNumber,
-  IsString,
-  ValidateNested,
-} from 'class-validator';
+import { IsNotEmpty, IsString, ValidateNested } from 'class-validator';
 
 class CareWorkerRequest {
   @IsNotEmpty()

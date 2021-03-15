@@ -16,7 +16,7 @@ export class CareWorkerCareerEntity {
     type: 'varchar',
     nullable: true,
   })
-  public recepient: string;
+  public recipient: string;
 
   @Column({
     type: 'varchar',
