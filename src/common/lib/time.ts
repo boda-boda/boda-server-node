@@ -5,3 +5,7 @@ export const timer = (second: number) => {
     }, second * 1000);
   });
 };
+
+export const toTimeString = (numb: number) => {
+  return numb >= 10 ? `${numb}` : `0${numb}`;
+};

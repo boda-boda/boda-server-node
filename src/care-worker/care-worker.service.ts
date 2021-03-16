@@ -23,7 +23,7 @@ export class CareWorkerService {
     public readonly careWorkerRepository: Repository<CareWorkerEntity>,
   ) {}
 
-  public getCareWorkerById(id: number) {
+  public getCareWorkerById(id: string) {
     return this.careWorkerRepository.findOne({
       relations: ['careWorkerMetas', 'careWorkerSchedules', 'careWorkerAreas', 'careWorkerCareers'],
       where: {
@@ -54,7 +54,7 @@ export class CareWorkerService {
       return { type: CAPABILITY, key, careWorkerId: targetWorker.id };
     });
 
-    await this.careWorkerMetaService.createCareWorkerMeta(capabilityMeta);
+    await this.careWorkerMetaService.createCareWorkerMeta(capabilityMeta, targetWorker.id);
 
     await this.careWorkerScheduleService.createCareWorkerSchedule(
       careWorkerRequest.careWorkerSchedules,
@@ -88,27 +88,24 @@ export class CareWorkerService {
       targetWorker,
       careWorkerRequest.careWorker,
     );
-
     await this.careWorkerRepository.save(updatedTargetWorker);
 
-    await this.deleteAllCurrentMetadataOfCareWorker(careWorkerRequest.id);
-
     const capabilityMeta = careWorkerRequest.careWorkerCapabilities.map((key) => {
-      return { type: CAPABILITY, key, careWorkerId: targetWorker.id };
+      return { type: CAPABILITY, key };
     });
-    await this.careWorkerMetaService.createCareWorkerMeta(capabilityMeta);
+    await this.careWorkerMetaService.updateCareWorkerMeta(capabilityMeta, targetWorker.id);
 
-    await this.careWorkerScheduleService.createCareWorkerSchedule(
+    await this.careWorkerScheduleService.updateCareWorkerSchedule(
       careWorkerRequest.careWorkerSchedules,
       targetWorker.id,
     );
 
-    await this.careWorkerCareerService.createCareWorkerCareer(
+    await this.careWorkerCareerService.updateCareWorkerCareer(
       careWorkerRequest.careWorkerCareers,
       targetWorker.id,
     );
 
-    await this.careWorkerAreaService.createAreaOfCareWorker(
+    await this.careWorkerAreaService.updateAreaOfCareWorker(
       careWorkerRequest.careWorkerAreas,
       targetWorker.id,
     );

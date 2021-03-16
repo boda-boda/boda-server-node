@@ -35,4 +35,31 @@ export class CareWorkerAreaService {
     const newCareWorkerArea = this.careWorkerAreaRepository.create(target);
     await this.careWorkerAreaRepository.save(newCareWorkerArea);
   }
+
+  public async updateAreaOfCareWorker(
+    careWorkerArea: Partial<CareWorkerAreaEntity>[],
+    careWorkerId: string,
+  ) {
+    const currentArea = await this.careWorkerAreaRepository.find({
+      where: { careWorkerId },
+    });
+
+    const newArea = careWorkerArea.map((area) => {
+      area.careWorkerId = careWorkerId;
+      return area;
+    });
+
+    const updatedArea = newArea.map((area, idx) => {
+      if (currentArea.length > idx) {
+        return this.careWorkerAreaRepository.merge(currentArea[idx], area);
+      }
+
+      return this.careWorkerAreaRepository.create(area);
+    });
+
+    const removedArea = currentArea.splice(newArea.length, currentArea.length - newArea.length);
+
+    if (removedArea.length) await this.careWorkerAreaRepository.remove(removedArea);
+    await this.careWorkerAreaRepository.save(updatedArea);
+  }
 }

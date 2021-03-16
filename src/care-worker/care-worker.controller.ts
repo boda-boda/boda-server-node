@@ -8,6 +8,7 @@ import {
   InternalServerErrorException,
   Param,
   Post,
+  Put,
   Req,
   UnauthorizedException,
   UploadedFile,
@@ -61,7 +62,7 @@ export class CareWorkerController {
   @Get('/:id')
   @Header('Cache-control', 'no-cache, no-store, must-revalidate')
   @UseGuards(OnlyCareCenterGuard)
-  public async getCareWorkerDetail(@Param('id') id: number) {
+  public async getCareWorkerDetail(@Param('id') id: string) {
     const careWorker = await this.careWorkerService.getCareWorkerById(id);
 
     return new CareWorkerResponse(careWorker);
@@ -70,7 +71,7 @@ export class CareWorkerController {
   @Post('/')
   @Header('Cache-control', 'no-cache, no-store, must-revalidate')
   @UseGuards(OnlyCareCenterGuard)
-  public async upsertCareWorker(
+  public async createCareWorker(
     @Req() request: Request,
     @Body() createWorkerRequest: CreateWorkerRequest,
   ) {
@@ -87,18 +88,47 @@ export class CareWorkerController {
 
     let result;
     try {
-      if (!createWorkerRequest.id) {
-        //insert
-        result = await this.careWorkerService.createCareWorker(
-          request.careCenter.id,
-          createWorkerRequest,
-        );
-      } else {
-        result = await this.careWorkerService.updateCareWorker(
-          request.careCenter.id,
-          createWorkerRequest,
-        );
-      }
+      result = await this.careWorkerService.createCareWorker(
+        request.careCenter.id,
+        createWorkerRequest,
+      );
+      await queryRunner.commitTransaction();
+    } catch (e) {
+      await queryRunner.rollbackTransaction();
+      await queryRunner.release();
+      throw e;
+    }
+    await queryRunner.release();
+
+    const careWorker = await this.careWorkerService.getCareWorkerById(result.id);
+
+    return new CareWorkerResponse(careWorker);
+  }
+
+  @Put('/')
+  @Header('Cache-control', 'no-cache, no-store, must-revalidate')
+  @UseGuards(OnlyCareCenterGuard)
+  public async updateCareCenter(
+    @Req() request: Request,
+    @Body() createWorkerRequest: CreateWorkerRequest,
+  ) {
+    if (!request.careCenter.id) {
+      throw new InternalServerErrorException('JWT가 이상합니다.');
+    }
+
+    if (!this.isValidCareWorkerSchledule(createWorkerRequest.careWorkerSchedules)) {
+      throw new BadRequestException('스케줄 양식이 올바르지 않습니다.');
+    }
+
+    const queryRunner = getConnection().createQueryRunner();
+    await queryRunner.startTransaction();
+
+    let result;
+    try {
+      result = await this.careWorkerService.updateCareWorker(
+        request.careCenter.id,
+        createWorkerRequest,
+      );
       await queryRunner.commitTransaction();
     } catch (e) {
       await queryRunner.rollbackTransaction();
