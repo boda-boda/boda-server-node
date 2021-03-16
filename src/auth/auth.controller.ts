@@ -9,6 +9,7 @@ import {
   Req,
   Res,
   UnauthorizedException,
+  UseGuards,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { CareCenterService } from 'src/care-center/care-center.service';
@@ -17,6 +18,7 @@ import { timer } from 'src/common/lib/time';
 import { AuthService } from './auth.service';
 import * as jwt from 'jsonwebtoken';
 import CareCenterResponse from 'src/care-center/dto/care-center-response.dto';
+import { OnlyAdminGuard } from 'src/common/guard/only-admin.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -111,6 +113,7 @@ export class AuthController {
   @Post('create')
   @Header('Cache-control', 'no-cache, no-store, must-revalidate')
   @Header('Access-Control-Allow-Credentials', 'true')
+  @UseGuards(OnlyAdminGuard)
   public async create(@Res() response: Response, @Body() { name, password }: LoginRequestDTO) {
     const duplicateCareCenter = await this.careCenterService.getCareCenterByName(name);
 
