@@ -29,6 +29,18 @@ export class CareWorkerMetaService {
     await this.careWorkerMetaRepository.save(allMetaEntity);
   }
 
+  public async createCapabilityMeta(availabilities: string[], careWorkerId: string) {
+    const availableMetaEntity = availabilities.map((a) =>
+      this.careWorkerMetaRepository.create({
+        type: CAPABILITY,
+        key: a,
+        careWorkerId,
+      }),
+    );
+
+    await this.careWorkerMetaRepository.save(availableMetaEntity);
+  }
+
   public async updateCareWorkerMeta(
     careWokerMetas: Partial<CareWorkerMetaEntity>[],
     careWorkerId: string,
@@ -39,26 +51,26 @@ export class CareWorkerMetaService {
       },
     });
 
-    const availabilityMeta = metas.filter((meta) => meta.type === CAPABILITY);
-    const availabilityMetaRequest = careWokerMetas
+    const capabilityMeta = metas.filter((meta) => meta.type === CAPABILITY);
+    const capabilityMetaRequest = careWokerMetas
       .map((meta) => {
         return { ...meta, careWorkerId };
       })
       .filter((meta) => meta.type === CAPABILITY);
-    const updatedAvailabilityMeta = availabilityMetaRequest.map((meta, idx) => {
-      if (availabilityMeta.length > idx) {
-        return this.careWorkerMetaRepository.merge(availabilityMeta[idx], meta);
+    const updatedCapabilityMeta = capabilityMetaRequest.map((meta, idx) => {
+      if (capabilityMeta.length > idx) {
+        return this.careWorkerMetaRepository.merge(capabilityMeta[idx], meta);
       }
 
       return this.careWorkerMetaRepository.create(meta);
     });
 
-    const removedMeta = availabilityMeta.splice(
-      availabilityMetaRequest.length,
-      availabilityMeta.length - availabilityMetaRequest.length,
+    const removedMeta = capabilityMeta.splice(
+      capabilityMetaRequest.length,
+      capabilityMeta.length - capabilityMetaRequest.length,
     );
 
     if (removedMeta.length) await this.careWorkerMetaRepository.remove(removedMeta);
-    await this.careWorkerMetaRepository.save(updatedAvailabilityMeta);
+    await this.careWorkerMetaRepository.save(updatedCapabilityMeta);
   }
 }

@@ -50,11 +50,10 @@ export class CareWorkerService {
     });
     const targetWorker = await this.careWorkerRepository.save(newCareWorker);
 
-    const capabilityMeta = careWorkerRequest.careWorkerCapabilities.map((key) => {
-      return { type: CAPABILITY, key, careWorkerId: targetWorker.id };
-    });
-
-    await this.careWorkerMetaService.createCareWorkerMeta(capabilityMeta, targetWorker.id);
+    await this.careWorkerMetaService.createCapabilityMeta(
+      careWorkerRequest.careWorkerCapabilities,
+      targetWorker.id,
+    );
 
     await this.careWorkerScheduleService.createCareWorkerSchedule(
       careWorkerRequest.careWorkerSchedules,
