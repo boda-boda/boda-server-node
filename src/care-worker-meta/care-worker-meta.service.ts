@@ -17,6 +17,7 @@ export class CareWorkerMetaService {
     });
   }
 
+  // 현재 사용되지 않는 메소드 (이슈 있어서 createCapabilityMeta로 이전함)
   public async createCareWorkerMeta(
     careWorkerMetas: Partial<CareWorkerMetaEntity>[],
     careWorkerId: string,
