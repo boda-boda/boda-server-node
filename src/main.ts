@@ -8,7 +8,12 @@ import { AppModule } from './app.module';
 dotenv.config();
 
 const corsOption = {
-  origin: ['http://localhost:3000', 'https://dolboda.kr', 'https://alpha.dolboda.kr'],
+  origin: [
+    'http://localhost:3000',
+    'https://dolboda.kr',
+    'https://alpha.dolboda.kr',
+    'https://dol-bom.com',
+  ],
   credentials: true,
 };
 
