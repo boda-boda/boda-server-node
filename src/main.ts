@@ -13,6 +13,7 @@ const corsOption = {
     'https://dolboda.kr',
     'https://alpha.dolboda.kr',
     'https://dol-bom.com',
+    'https://www.dol-bom.com',
   ],
   credentials: true,
 };
