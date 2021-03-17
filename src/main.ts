@@ -9,10 +9,9 @@ dotenv.config();
 
 const corsOption = {
   origin: [
-    'http://localhost:3000',
+    // 'http://localhost:3000',
     'https://dolboda.kr',
     'https://alpha.dolboda.kr',
-    'https://dol-bom.com',
     'https://www.dol-bom.com',
   ],
   credentials: true,
