@@ -7,9 +7,9 @@ import { AppModule } from './app.module';
 
 dotenv.config();
 
-const corsOption = {
+const devCorsOption = {
   origin: [
-    // 'http://localhost:3000',
+    'http://localhost:3000',
     'https://dolboda.kr',
     'https://alpha.dolboda.kr',
     'https://www.dol-bom.com',
@@ -17,9 +17,15 @@ const corsOption = {
   credentials: true,
 };
 
+const corsOption = {
+  origin: ['https://dolboda.kr', 'https://alpha.dolboda.kr', 'https://www.dol-bom.com'],
+  credentials: true,
+};
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.enableCors(corsOption);
+  const option = process.env.NODE_ENV === 'DEV' ? devCorsOption : corsOption;
+  app.enableCors(option);
 
   app.use(cookieParser());
   app.useGlobalPipes(
