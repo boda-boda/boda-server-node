@@ -48,6 +48,8 @@ export class CareWorkerService {
       ...careWorkerRequest.careWorker,
       careCenterId,
     });
+    console.log(this.createCareWorker);
+
     const targetWorker = await this.careWorkerRepository.save(newCareWorker);
 
     await this.careWorkerMetaService.createCapabilityMeta(

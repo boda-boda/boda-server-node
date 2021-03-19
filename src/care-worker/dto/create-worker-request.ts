@@ -7,7 +7,7 @@ class CareWorkerRequest {
 
   public isFemale: boolean;
 
-  public age: number;
+  public birthDay: string;
 
   public phoneNumber: string;
 

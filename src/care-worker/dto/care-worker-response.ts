@@ -8,7 +8,10 @@ import CareWorkerCareerResponse from 'src/care-worker-career/model/care-worker-c
 export default class CareWorkerResponse {
   public constructor(careWorkerEntity: CareWorkerEntity) {
     this.id = careWorkerEntity.id;
-    this.age = careWorkerEntity.age;
+    this.birthDay = careWorkerEntity.birthDay;
+    this.age = careWorkerEntity.birthDay
+      ? new Date().getFullYear() - new Date(careWorkerEntity.birthDay).getFullYear() + 1
+      : 0;
     this.name = careWorkerEntity.name;
     this.gender = careWorkerEntity.isFemale ? '여성' : '남성';
     this.profile = careWorkerEntity.profile;
@@ -44,6 +47,7 @@ export default class CareWorkerResponse {
   public name: string;
   public gender: string;
   public age: number;
+  public birthDay: string;
   public phoneNumber: string;
   public profile: string;
   public address: string;

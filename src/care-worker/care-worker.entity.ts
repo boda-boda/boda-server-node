@@ -24,10 +24,10 @@ export class CareWorkerEntity {
   public isFemale: boolean;
 
   @Column({
-    type: 'int',
+    type: 'date',
     nullable: false,
   })
-  public age: number;
+  public birthDay: string;
 
   @Column({
     type: 'boolean',
