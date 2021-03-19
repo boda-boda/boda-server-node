@@ -13,7 +13,11 @@ class CareWorkerRequest {
 
   public profile: string;
 
+  public zipCode: string;
+
   public address: string;
+
+  public detailAddress: string;
 
   public description: string;
 }

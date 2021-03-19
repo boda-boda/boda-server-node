@@ -51,8 +51,21 @@ export class CareWorkerEntity {
 
   @Column({
     type: 'text',
+    nullable: true,
+  })
+  public zipCode: string;
+
+  @Column({
+    type: 'text',
+    nullable: true,
   })
   public address: string;
+
+  @Column({
+    type: 'text',
+    nullable: true,
+  })
+  public detailAddress: string;
 
   @Column({
     type: 'text',

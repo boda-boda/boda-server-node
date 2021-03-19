@@ -16,7 +16,9 @@ export default class CareWorkerResponse {
     this.gender = careWorkerEntity.isFemale ? '여성' : '남성';
     this.profile = careWorkerEntity.profile;
     this.phoneNumber = careWorkerEntity.phoneNumber;
+    this.zipCode = careWorkerEntity.zipCode;
     this.address = careWorkerEntity.address;
+    this.detailAddress = careWorkerEntity.detailAddress;
     this.description = careWorkerEntity.description;
     this.careCenter = careWorkerEntity.careCenter
       ? new CareCenterResponse(careWorkerEntity.careCenter)
@@ -50,7 +52,9 @@ export default class CareWorkerResponse {
   public birthDay: string;
   public phoneNumber: string;
   public profile: string;
+  public zipCode: string;
   public address: string;
+  public detailAddress: string;
   public description: string;
   public careCenter?: CareCenterResponse;
   public careWorkerMetas: CareWorkerMetaResponse[];
