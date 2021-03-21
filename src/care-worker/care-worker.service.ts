@@ -126,9 +126,14 @@ export class CareWorkerService {
   }
 
   public async deleteCareWorker(careWorkerId: string) {
-    await this.deleteAllCurrentMetadataOfCareWorker(careWorkerId);
+    const targetCareWorker = await this.careWorkerRepository.findOne({
+      where: {
+        id: careWorkerId,
+      },
+    });
 
-    return await this.careWorkerRepository.delete({ id: careWorkerId });
+    targetCareWorker.isDeleted = true;
+    await this.careWorkerRepository.save(targetCareWorker);
   }
 
   public async uploadImage(file: any) {
@@ -155,13 +160,6 @@ export class CareWorkerService {
     await this.careWorkerRepository.save(careWorker);
 
     return careWorker;
-  }
-
-  private async deleteAllCurrentMetadataOfCareWorker(careWorkerId: string) {
-    await this.careWorkerMetaService.deleteAllMetaDataOfCareWorker(careWorkerId);
-    await this.careWorkerAreaService.deleteAllAreaOfCareWorker(careWorkerId);
-    await this.careWorkerScheduleService.deleteAllScheduleOfCareWorker(careWorkerId);
-    await this.careWorkerCareerService.deleteAllCareerOfCareWorker(careWorkerId);
   }
 
   async uploadS3(file, bucket, name) {

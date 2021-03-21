@@ -45,7 +45,6 @@ export class CareWorkerController {
   }
 
   @Get('/')
-  @Header('Cache-control', 'no-cache, no-store, must-revalidate')
   @UseGuards(OnlyCareCenterGuard)
   public async getCareWorkerOfCareCenter(@Req() request: Request) {
     if (!request.careCenter.id) {
@@ -60,7 +59,6 @@ export class CareWorkerController {
   }
 
   @Get('/:id')
-  @Header('Cache-control', 'no-cache, no-store, must-revalidate')
   @UseGuards(OnlyCareCenterGuard)
   public async getCareWorkerDetail(@Param('id') id: string) {
     const careWorker = await this.careWorkerService.getCareWorkerById(id);

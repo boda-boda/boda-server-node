@@ -46,7 +46,6 @@ export class CareCenterController {
   }
 
   @Get('/')
-  @Header('Cache-control', 'no-cache, no-store, must-revalidate')
   @UseGuards(OnlyCareCenterGuard)
   public async getCareCenterDetail(@Req() request: Request) {
     const careCenter = await this.careCenterService.getCareCenterById(request.careCenter.id);
