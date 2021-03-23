@@ -14,4 +14,11 @@ export class BaseEntity {
     default: () => 'CURRENT_TIMESTAMP',
   })
   public updatedAt: string;
+
+  @Column({
+    type: 'boolean',
+    nullable: true,
+    default: false,
+  })
+  public isDeleted: boolean;
 }

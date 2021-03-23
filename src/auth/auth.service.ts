@@ -4,10 +4,19 @@ import CareCenterResponse from 'src/care-center/dto/care-center-response.dto';
 import * as jwt from 'jsonwebtoken';
 import Bcrypt from 'src/common/lib/bcrypt';
 import { MailService } from 'src/mail/mail.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { VerifyEmailEntity } from './verify-email.entity';
+import { Repository } from 'typeorm';
+import { v4 } from 'uuid';
 
 @Injectable()
 export class AuthService {
-  public constructor(private readonly mailService: MailService) {}
+  public constructor(
+    @InjectRepository(VerifyEmailEntity)
+    private readonly verifyEmailRepository: Repository<VerifyEmailEntity>,
+
+    private readonly mailService: MailService,
+  ) {}
 
   public createAccessToken(careCenterEntity: CareCenterEntity) {
     const careCenterResponseDTO = new CareCenterResponse(careCenterEntity);
@@ -47,8 +56,21 @@ export class AuthService {
     return false;
   }
 
-  public sendResetPasswordEmail(email: string) {
-    this.mailService.sendResetPasswordEmail(email);
-    return;
+  public async createPasswordVerificationKey(email: string) {
+    const key = v4();
+
+    const newVerifyEmailInstance = this.verifyEmailRepository.create({
+      email,
+      key,
+      isKeyActive: true,
+    });
+
+    await this.verifyEmailRepository.save(newVerifyEmailInstance);
+
+    return key;
+  }
+
+  public async sendResetPasswordEmail(email: string, key: string) {
+    await this.mailService.sendResetPasswordEmail(email, key);
   }
 }

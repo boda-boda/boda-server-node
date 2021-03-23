@@ -1,21 +1,27 @@
 import { BaseEntity } from 'src/common/entity/base';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity('consult')
-export class ConsultEntity extends BaseEntity {
+@Entity('verify-email')
+export class VerifyEmailEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   public id: number;
 
   @Column({
     type: 'varchar',
-    length: 50,
     nullable: false,
   })
-  public contact: string;
+  public email: string;
+
+  @Column({
+    type: 'varchar',
+    nullable: false,
+  })
+  public key: string;
 
   @Column({
     type: 'boolean',
-    default: false,
+    nullable: false,
+    default: true,
   })
-  public isFinished: boolean;
+  public isKeyActive: boolean;
 }

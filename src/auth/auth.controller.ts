@@ -147,8 +147,15 @@ export class AuthController {
     });
   }
 
-  @Post('reset-password')
-  public async sendChangePasswordEmail(@Body() { email }: ChangePasswordRequest) {
-    this.authService.sendResetPasswordEmail(email);
+  @Post('reset-password/email')
+  public async sendChangeCareCenterPasswordEmail(@Body() { email }: ChangePasswordRequest) {
+    const targetCareCenter = await this.careCenterService.findCareCenterByEmail(email);
+    if (!targetCareCenter) {
+      throw new NotFoundException('해당 이메일로 등록된 센터가 존재하지 않습니다.');
+    }
+
+    const key = await this.authService.createPasswordVerificationKey(email);
+
+    await this.authService.sendResetPasswordEmail(email, key);
   }
 }

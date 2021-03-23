@@ -1,10 +1,11 @@
 import { CareCenterMetaEntity } from 'src/care-center-meta/care-center-meta.entity';
 import { CareWorkerEntity } from 'src/care-worker/care-worker.entity';
+import { BaseEntity } from 'src/common/entity/base';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany, Unique } from 'typeorm';
 
 @Entity('care-center')
 @Unique('UQ_NAME', ['name'])
-export class CareCenterEntity {
+export class CareCenterEntity extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   public id: string;
 
@@ -58,8 +59,10 @@ export class CareCenterEntity {
   public homePage: string;
 
   @Column({
-    type: 'text',
+    type: 'varchar',
+    length: 320,
     nullable: true,
+    unique: true,
   })
   public email: string;
 

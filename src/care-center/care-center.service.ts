@@ -27,11 +27,7 @@ export class CareCenterService {
   }
 
   public async createCareCenter({ name, password }: LoginRequestDTO): Promise<CareCenterEntity> {
-    const duplicateCareCenter = await this.careCenterRepository.findOne({
-      where: {
-        name,
-      },
-    });
+    const duplicateCareCenter = await this.careCenterRepository.findOne({ where: { name } });
 
     if (duplicateCareCenter) {
       throw new ConflictException(`${name}은 이미 존재하는 회원입니다`);
@@ -52,16 +48,16 @@ export class CareCenterService {
   }
 
   public async updateCareCenter(careCenterId: string, careCenter: UpdateCareCenterRequest) {
-    const targetCenter = await this.careCenterRepository.findOne({
-      where: {
-        id: careCenterId,
-      },
-    });
+    const targetCenter = await this.careCenterRepository.findOne({ where: { id: careCenterId } });
 
     const updatedTargetCenter = this.careCenterRepository.merge(targetCenter, careCenter);
 
     const result = await this.careCenterRepository.save(updatedTargetCenter);
 
     return result;
+  }
+
+  public async findCareCenterByEmail(email: string) {
+    return await this.careCenterRepository.findOne({ where: { email } });
   }
 }

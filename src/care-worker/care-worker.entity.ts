@@ -4,9 +4,10 @@ import { CareCenterEntity } from 'src/care-center/care-center.entity';
 import { CareWorkerAreaEntity } from 'src/care-worker-area/care-worker-area.entity';
 import { Entity, Column, PrimaryGeneratedColumn, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { CareWorkerCareerEntity } from 'src/care-worker-career/care-worker-career.entity';
+import { BaseEntity } from 'src/common/entity/base';
 
 @Entity('care-worker')
-export class CareWorkerEntity {
+export class CareWorkerEntity extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   public id: string;
 
@@ -28,13 +29,6 @@ export class CareWorkerEntity {
     nullable: false,
   })
   public birthDay: string;
-
-  @Column({
-    type: 'boolean',
-    nullable: true,
-    default: false,
-  })
-  public isDeleted: boolean;
 
   @Column({
     type: 'varchar',
