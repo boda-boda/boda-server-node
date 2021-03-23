@@ -9,7 +9,7 @@ export class MailService {
     this.transporter = nodemailer.createTransport({
       host: 'smtp.gmail.com',
       port: 587,
-      secure: false, // true for 465, false for other ports
+      secure: false,
       auth: {
         user: process.env.AUTH_GMAIL,
         pass: process.env.AUTH_GMAIL_PASSWORD,
@@ -18,11 +18,10 @@ export class MailService {
   }
 
   public async sendResetPasswordEmail(email: string) {
-    // send mail with defined transport object
     const info = await this.transporter.sendMail({
-      from: '"돌봄 고객센터" <help@dol-bom.com>', // sender address
-      to: email, // list of receivers
-      subject: '[돌봄] 새로운 비밀번호를 설정해주세요', // Subject line
+      from: '"돌봄 고객센터" <help@dol-bom.com>',
+      to: email,
+      subject: '[돌봄] 새로운 비밀번호를 설정해주세요',
       html: `<div style="padding: 26px 18px;">
               <img style="width: 150px" src="https://dolbom.s3.amazonaws.com/newFiles/f291e097-b8de-4be8-bfa9-73fbded4ab54_logo.png"/>
               <h1 style="margin-top: 23px; margin-bottom: 9px; color: #222222; font-size: 19px; line-height: 25px; letter-spacing: -0.27px;">새 비밀번호 설정</h1>

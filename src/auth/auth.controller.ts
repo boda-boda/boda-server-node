@@ -147,7 +147,7 @@ export class AuthController {
     });
   }
 
-  @Post('change-password-email')
+  @Post('reset-password')
   public async sendChangePasswordEmail(@Body() { email }: ChangePasswordRequest) {
     this.authService.sendResetPasswordEmail(email);
   }
