@@ -19,6 +19,7 @@ import { AuthService } from './auth.service';
 import * as jwt from 'jsonwebtoken';
 import CareCenterResponse from 'src/care-center/dto/care-center-response.dto';
 import { OnlyAdminGuard } from 'src/common/guard/only-admin.guard';
+import ChangePasswordRequest from './dto/change-password-request';
 
 @Controller('auth')
 export class AuthController {
@@ -144,5 +145,10 @@ export class AuthController {
       expiresIn: 60,
       careCenter: new CareCenterResponse(result),
     });
+  }
+
+  @Post('reset-password')
+  public async sendChangePasswordEmail(@Body() { email }: ChangePasswordRequest) {
+    this.authService.sendResetPasswordEmail(email);
   }
 }

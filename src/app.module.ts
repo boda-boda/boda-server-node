@@ -12,6 +12,7 @@ import { ConsultModule } from './consult/consult.module';
 import { AuthModule } from './auth/auth.module';
 import { CareWorkerAreaModule } from './care-worker-area/care-worker-area.module';
 import { CareWorkerCareerModule } from './care-worker-career/care-worker-career.module';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { CareWorkerCareerModule } from './care-worker-career/care-worker-career.
     AuthModule,
     CareWorkerAreaModule,
     CareWorkerCareerModule,
+    MailModule,
   ],
   controllers: [AppController],
   providers: [AppService],
