@@ -54,7 +54,7 @@ export class AuthController {
     response.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       expires: new Date(Date.now() + 3600 * 24 * 30 * 1000),
-      domain: 'dol-bom.com',
+      domain: process.env.DOMAIN,
     });
 
     response.json({
@@ -136,7 +136,7 @@ export class AuthController {
     response.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       expires: new Date(Date.now() + 3600 * 24 * 30 * 1000),
-      domain: 'dol-bom.com',
+      domain: process.env.DOMAIN,
     });
 
     response.json({
