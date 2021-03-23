@@ -3,9 +3,12 @@ import { CareCenterEntity } from 'src/care-center/care-center.entity';
 import CareCenterResponse from 'src/care-center/dto/care-center-response.dto';
 import * as jwt from 'jsonwebtoken';
 import Bcrypt from 'src/common/lib/bcrypt';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class AuthService {
+  public constructor(private readonly mailService: MailService) {}
+
   public createAccessToken(careCenterEntity: CareCenterEntity) {
     const careCenterResponseDTO = new CareCenterResponse(careCenterEntity);
 
@@ -42,5 +45,10 @@ export class AuthService {
     }
 
     return false;
+  }
+
+  public sendResetPasswordEmail(email: string) {
+    this.mailService.sendResetPasswordEmail(email);
+    return;
   }
 }
