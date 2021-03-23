@@ -50,9 +50,11 @@ export class AuthController {
 
     await timer(0.25);
 
+    // https://stackoverflow.com/questions/18492576/share-cookie-between-subdomain-and-domain
     response.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       expires: new Date(Date.now() + 3600 * 24 * 30 * 1000),
+      domain: 'dol-bom.com',
     });
 
     response.json({
@@ -134,6 +136,7 @@ export class AuthController {
     response.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       expires: new Date(Date.now() + 3600 * 24 * 30 * 1000),
+      domain: 'dol-bom.com',
     });
 
     response.json({
