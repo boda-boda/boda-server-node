@@ -52,6 +52,7 @@ export class AuthController {
 
     response.cookie('refreshToken', refreshToken, {
       httpOnly: true,
+      expires: new Date(Date.now() + 3600 * 24 * 30 * 1000),
     });
 
     response.json({
@@ -130,7 +131,11 @@ export class AuthController {
     const accessToken = this.authService.createAccessToken(result);
     const refreshToken = this.authService.createRefreshToken(result);
 
-    response.cookie('refreshToken', refreshToken);
+    response.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      expires: new Date(Date.now() + 3600 * 24 * 30 * 1000),
+    });
+
     response.json({
       accessToken,
       expiresIn: 60,
