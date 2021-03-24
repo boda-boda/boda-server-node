@@ -10,6 +10,12 @@ export class VerifyEmailEntity extends BaseEntity {
     type: 'varchar',
     nullable: false,
   })
+  public careCenterId: string;
+
+  @Column({
+    type: 'varchar',
+    nullable: false,
+  })
   public email: string;
 
   @Column({

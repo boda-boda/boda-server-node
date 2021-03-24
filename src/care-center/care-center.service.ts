@@ -1,5 +1,5 @@
 import { Repository } from 'typeorm';
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CareCenterEntity } from './care-center.entity';
 import Bcrypt from 'src/common/lib/bcrypt';
@@ -45,6 +45,22 @@ export class CareCenterService {
     const CareCenter = this.careCenterRepository.create(updatedRequest);
     await this.careCenterRepository.save(CareCenter);
     return CareCenter;
+  }
+
+  public async updatePassword(password: string, careCenterId: string) {
+    const targetCareCenter = await this.careCenterRepository.findOne({
+      where: { id: careCenterId, isDeleted: false },
+    });
+
+    if (!targetCareCenter) {
+      throw new NotFoundException('해당 CareCenter가 존재하지 않습니다.');
+    }
+
+    const salt = await Bcrypt.createSalt();
+    const hashedPassword = await Bcrypt.hash(password, salt);
+
+    targetCareCenter.password = hashedPassword;
+    await this.careCenterRepository.save(targetCareCenter);
   }
 
   public async updateCareCenter(careCenterId: string, careCenter: UpdateCareCenterRequest) {

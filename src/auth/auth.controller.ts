@@ -20,6 +20,8 @@ import * as jwt from 'jsonwebtoken';
 import CareCenterResponse from 'src/care-center/dto/care-center-response.dto';
 import { OnlyAdminGuard } from 'src/common/guard/only-admin.guard';
 import ChangePasswordRequest from './dto/change-password-request';
+import UpdatePasswordFromEmailRequest from './dto/update-password-from-email-request';
+import { getConnection } from 'typeorm';
 
 @Controller('auth')
 export class AuthController {
@@ -154,8 +156,37 @@ export class AuthController {
       throw new NotFoundException('해당 이메일로 등록된 센터가 존재하지 않습니다.');
     }
 
-    const key = await this.authService.createPasswordVerificationKey(email);
+    const entity = await this.authService.createPasswordVerificationKey(targetCareCenter);
 
-    await this.authService.sendResetPasswordEmail(email, key);
+    await this.authService.sendResetPasswordEmail(entity.id, entity.email, entity.key);
+  }
+
+  @Post('reset-password/email/challenge')
+  public async updateCareCenterPasswordFromEmail(
+    @Body() { id, password, key }: UpdatePasswordFromEmailRequest,
+  ) {
+    const verifyEmailEntity = await this.authService.validateResetPasswordEmail(id, key);
+    if (!verifyEmailEntity) {
+      throw new UnauthorizedException('인증되지 않은 요청입니다.');
+    }
+
+    const queryRunner = getConnection().createQueryRunner();
+    await queryRunner.startTransaction();
+
+    // TODO: 비밀번호 복잡도가 낮을 시 오류 반환하게 하기
+
+    try {
+      // 비밀번호 변경하기
+      await this.careCenterService.updatePassword(password, verifyEmailEntity.careCenterId);
+      // 비밀번호 변경이 성공하였으면 해당 인증번호가 만료되게끔 세팅하기
+      await this.authService.setVerifyEmailEntityExpired(verifyEmailEntity);
+      await queryRunner.commitTransaction();
+    } catch (e) {
+      await queryRunner.rollbackTransaction();
+      await queryRunner.release();
+      throw e;
+    }
+
+    await queryRunner.release();
   }
 }

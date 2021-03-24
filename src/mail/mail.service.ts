@@ -18,7 +18,7 @@ export class MailService {
   }
 
   // TODO : 메일 수신 에러 핸들링
-  public async sendResetPasswordEmail(email: string, key: string) {
+  public async sendResetPasswordEmail(id: number, email: string, key: string) {
     const info = await this.transporter.sendMail({
       from: '"돌봄 고객센터" <help@dol-bom.com>',
       to: email,
@@ -43,7 +43,7 @@ export class MailService {
                   </p>
                   <div style="margin: 30px 0">
                     <a
-                      href="${process.env.PASSWORD_RESET_URL}/reset-password?email=${email}&key=${key}"
+                      href="${process.env.PASSWORD_RESET_URL}/reset-password/${id}/${key}"
                       style="background-color: #683b93; color: white; text-decoration: none; padding: 10px 15px; border-radius: 3px"
                       >비밀번호 변경하기</a
                     >

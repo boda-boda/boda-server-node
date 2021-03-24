@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CareCenterEntity } from 'src/care-center/care-center.entity';
 import CareCenterResponse from 'src/care-center/dto/care-center-response.dto';
 import * as jwt from 'jsonwebtoken';
@@ -56,21 +56,42 @@ export class AuthService {
     return false;
   }
 
-  public async createPasswordVerificationKey(email: string) {
+  public async createPasswordVerificationKey(targetCenter: CareCenterEntity) {
     const key = v4();
 
     const newVerifyEmailInstance = this.verifyEmailRepository.create({
-      email,
+      careCenterId: targetCenter.id,
+      email: targetCenter.email,
       key,
       isKeyActive: true,
     });
 
-    await this.verifyEmailRepository.save(newVerifyEmailInstance);
+    const verifyEmailEntity = await this.verifyEmailRepository.save(newVerifyEmailInstance);
 
-    return key;
+    return verifyEmailEntity;
   }
 
-  public async sendResetPasswordEmail(email: string, key: string) {
-    await this.mailService.sendResetPasswordEmail(email, key);
+  public async sendResetPasswordEmail(id: number, email: string, key: string) {
+    await this.mailService.sendResetPasswordEmail(id, email, key);
+  }
+
+  public async validateResetPasswordEmail(id: number, key: string) {
+    const verifyEmailEntity = await this.verifyEmailRepository.findOne({
+      where: {
+        id,
+        key,
+      },
+    });
+
+    if (!verifyEmailEntity) {
+      throw new UnauthorizedException('올바르지 않은 요청입니다.');
+    }
+
+    return verifyEmailEntity;
+  }
+
+  public async setVerifyEmailEntityExpired(verifyEmailEntity: VerifyEmailEntity) {
+    verifyEmailEntity.isKeyActive = false;
+    await this.verifyEmailRepository.save(verifyEmailEntity);
   }
 }
