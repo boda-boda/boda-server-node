@@ -61,6 +61,9 @@ export class CreateWorkerRequest {
   @IsString({ each: true })
   public careWorkerCapabilities: string[];
 
+  @IsString({ each: true })
+  public careWorkerReligions: string[];
+
   @ValidateNested({ each: true })
   @Type(() => CareWorkerScheduleRequest)
   public careWorkerSchedules: CareWorkerScheduleRequest[];
