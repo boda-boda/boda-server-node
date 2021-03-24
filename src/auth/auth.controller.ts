@@ -2,6 +2,8 @@ import {
   Body,
   ConflictException,
   Controller,
+  ForbiddenException,
+  GoneException,
   Header,
   InternalServerErrorException,
   NotFoundException,
@@ -168,6 +170,17 @@ export class AuthController {
     const verifyEmailEntity = await this.authService.validateResetPasswordEmail(id, key);
     if (!verifyEmailEntity) {
       throw new UnauthorizedException('인증되지 않은 요청입니다.');
+    }
+
+    // 중복 요청 검증
+    if (!verifyEmailEntity.isKeyActive) {
+      throw new ForbiddenException('인증 키가 만료되었습니다.');
+    }
+
+    // 만료 기한 검증
+    if (new Date(verifyEmailEntity.deadline).getTime() < Date.now()) {
+      await this.authService.setVerifyEmailEntityExpired(verifyEmailEntity);
+      throw new GoneException('인증 제한 시간이 초과되었습니다.');
     }
 
     const queryRunner = getConnection().createQueryRunner();

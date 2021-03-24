@@ -64,6 +64,7 @@ export class AuthService {
       email: targetCenter.email,
       key,
       isKeyActive: true,
+      deadline: new Date(Date.now() + 1000 * 60 * 5).toISOString(), // 만료 기한 5분으로 설정
     });
 
     const verifyEmailEntity = await this.verifyEmailRepository.save(newVerifyEmailInstance);

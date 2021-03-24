@@ -30,4 +30,11 @@ export class VerifyEmailEntity extends BaseEntity {
     default: true,
   })
   public isKeyActive: boolean;
+
+  @Column({
+    type: 'timestamp',
+    nullable: false,
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  public deadline: string;
 }
