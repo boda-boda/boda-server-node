@@ -60,6 +60,8 @@ export class AuthController {
       httpOnly: true,
       expires: new Date(Date.now() + 3600 * 24 * 30 * 1000),
       domain: process.env.DOMAIN,
+      secure: true,
+      sameSite: 'none',
     });
 
     response.json({
@@ -142,6 +144,8 @@ export class AuthController {
       httpOnly: true,
       expires: new Date(Date.now() + 3600 * 24 * 30 * 1000),
       domain: process.env.DOMAIN,
+      secure: true,
+      sameSite: 'none',
     });
 
     response.json({
