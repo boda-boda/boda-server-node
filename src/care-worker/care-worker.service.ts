@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CAPABILITY } from 'src/constant';
+import { CAPABILITY, RELIGION } from 'src/constant';
 import { Repository } from 'typeorm';
 import { CareWorkerEntity } from './care-worker.entity';
 import { CreateWorkerRequest } from './dto/create-worker-request';
@@ -56,6 +56,11 @@ export class CareWorkerService {
       targetWorker.id,
     );
 
+    await this.careWorkerMetaService.createReligionMeta(
+      careWorkerRequest.careWorkerReligions,
+      targetWorker.id,
+    );
+
     await this.careWorkerScheduleService.createCareWorkerSchedule(
       careWorkerRequest.careWorkerSchedules,
       targetWorker.id,
@@ -94,6 +99,11 @@ export class CareWorkerService {
       return { type: CAPABILITY, key };
     });
     await this.careWorkerMetaService.updateCareWorkerMeta(capabilityMeta, targetWorker.id);
+
+    const religionMeta = careWorkerRequest.careWorkerReligions.map((key) => {
+      return { type: RELIGION, key };
+    });
+    await this.careWorkerMetaService.updateCareWorkerMeta(religionMeta, targetWorker.id);
 
     await this.careWorkerScheduleService.updateCareWorkerSchedule(
       careWorkerRequest.careWorkerSchedules,

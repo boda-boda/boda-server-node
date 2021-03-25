@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CAPABILITY } from 'src/constant';
+import { CAPABILITY, RELIGION } from 'src/constant';
 import { Repository } from 'typeorm';
 import { CareWorkerMetaEntity } from './care-worker-meta.entity';
 
@@ -42,6 +42,18 @@ export class CareWorkerMetaService {
     await this.careWorkerMetaRepository.save(availableMetaEntity);
   }
 
+  public async createReligionMeta(religions: string[], careWorkerId: string) {
+    const religionMetaEntity = religions.map((a) =>
+      this.careWorkerMetaRepository.create({
+        type: RELIGION,
+        key: a,
+        careWorkerId,
+      }),
+    );
+
+    await this.careWorkerMetaRepository.save(religionMetaEntity);
+  }
+
   public async updateCareWorkerMeta(
     careWokerMetas: Partial<CareWorkerMetaEntity>[],
     careWorkerId: string,
@@ -51,7 +63,6 @@ export class CareWorkerMetaService {
         careWorkerId,
       },
     });
-
     const capabilityMeta = metas.filter((meta) => meta.type === CAPABILITY);
     const capabilityMetaRequest = careWokerMetas
       .map((meta) => {
@@ -66,12 +77,35 @@ export class CareWorkerMetaService {
       return this.careWorkerMetaRepository.create(meta);
     });
 
-    const removedMeta = capabilityMeta.splice(
+    const removedCapabilityMeta = capabilityMeta.splice(
       capabilityMetaRequest.length,
       capabilityMeta.length - capabilityMetaRequest.length,
     );
 
-    if (removedMeta.length) await this.careWorkerMetaRepository.remove(removedMeta);
+    if (removedCapabilityMeta.length)
+      await this.careWorkerMetaRepository.remove(removedCapabilityMeta);
     await this.careWorkerMetaRepository.save(updatedCapabilityMeta);
+
+    const religionMeta = metas.filter((meta) => meta.type === RELIGION);
+    const religionMetaRequest = careWokerMetas
+      .map((meta) => {
+        return { ...meta, careWorkerId };
+      })
+      .filter((meta) => meta.type === RELIGION);
+    const updatedReligionMeta = religionMetaRequest.map((meta, idx) => {
+      if (religionMeta.length > idx) {
+        return this.careWorkerMetaRepository.merge(religionMeta[idx], meta);
+      }
+
+      return this.careWorkerMetaRepository.create(meta);
+    });
+
+    const removedReligionMeta = religionMeta.splice(
+      religionMetaRequest.length,
+      religionMeta.length - religionMetaRequest.length,
+    );
+
+    if (removedReligionMeta.length) await this.careWorkerMetaRepository.remove(removedReligionMeta);
+    await this.careWorkerMetaRepository.save(updatedReligionMeta);
   }
 }
