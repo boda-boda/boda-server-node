@@ -16,7 +16,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { Request } from 'express';
+import { request, Request } from 'express';
 import { OnlyCareCenterGuard } from 'src/common/guard/only-care-center.guard';
 import { SentryInterceptor } from 'src/common/interceptor/sentry.interceptor';
 import { ValidateIdPipe } from 'src/common/pipe/validate-id.pipe';
@@ -62,8 +62,10 @@ export class CareWorkerController {
 
   @Get('/:id')
   @UseGuards(OnlyCareCenterGuard)
-  public async getCareWorkerDetail(@Param('id') id: string) {
-    const careWorker = await this.careWorkerService.getCareWorkerById(id);
+  public async getCareWorkerDetail(@Req() request: Request, @Param('id') id: string) {
+    const careCenterId = request.careCenter.id;
+
+    const careWorker = await this.careWorkerService.getCareWorkerById(id, careCenterId);
 
     return new CareWorkerResponse(careWorker);
   }
@@ -100,7 +102,10 @@ export class CareWorkerController {
     }
     await queryRunner.release();
 
-    const careWorker = await this.careWorkerService.getCareWorkerById(result.id);
+    const careWorker = await this.careWorkerService.getCareWorkerById(
+      result.id,
+      request.careCenter.id,
+    );
 
     return new CareWorkerResponse(careWorker);
   }
@@ -137,7 +142,10 @@ export class CareWorkerController {
     }
     await queryRunner.release();
 
-    const careWorker = await this.careWorkerService.getCareWorkerById(result.id);
+    const careWorker = await this.careWorkerService.getCareWorkerById(
+      result.id,
+      request.careCenter.id,
+    );
 
     return new CareWorkerResponse(careWorker);
   }

@@ -23,12 +23,13 @@ export class CareWorkerService {
     public readonly careWorkerRepository: Repository<CareWorkerEntity>,
   ) {}
 
-  public getCareWorkerById(id: string) {
+  public getCareWorkerById(id: string, careCenterId: string) {
     return this.careWorkerRepository.findOne({
       relations: ['careWorkerMetas', 'careWorkerSchedules', 'careWorkerAreas', 'careWorkerCareers'],
       where: {
         id,
         isDeleted: false,
+        careCenterId,
       },
     });
   }
