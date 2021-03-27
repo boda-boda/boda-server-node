@@ -1,4 +1,3 @@
-import { CareCenterMetaEntity } from 'src/care-center-meta/care-center-meta.entity';
 import CareCenterMetaResponse from 'src/care-center-meta/dto/care-center-response.dto';
 import { CareCenterEntity } from '../care-center.entity';
 
