@@ -21,6 +21,7 @@ import { CareWorkerService } from 'src/care-worker/care-worker.service';
 import CareWorkerResponse from 'src/care-worker/dto/care-worker-response';
 import { OnlyAdminGuard } from 'src/common/guard/only-admin.guard';
 import { OnlyCareCenterGuard } from 'src/common/guard/only-care-center.guard';
+import { SentryInterceptor } from 'src/common/interceptor/sentry.interceptor';
 import { ValidateIdPipe } from 'src/common/pipe/validate-id.pipe';
 import { getConnection } from 'typeorm';
 import { CareCenterService } from './care-center.service';
@@ -28,6 +29,7 @@ import CareCenterResponse from './dto/care-center-response.dto';
 import UpdateCareCenterRequest from './dto/update-care-center-request.dto';
 
 @Controller('care-center')
+@UseInterceptors(SentryInterceptor)
 export class CareCenterController {
   public constructor(
     private readonly careCenterService: CareCenterService,

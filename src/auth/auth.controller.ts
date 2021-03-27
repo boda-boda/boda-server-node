@@ -12,6 +12,7 @@ import {
   Res,
   UnauthorizedException,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { CareCenterService } from 'src/care-center/care-center.service';
@@ -24,8 +25,10 @@ import { OnlyAdminGuard } from 'src/common/guard/only-admin.guard';
 import ChangePasswordRequest from './dto/change-password-request';
 import UpdatePasswordFromEmailRequest from './dto/update-password-from-email-request';
 import { getConnection } from 'typeorm';
+import { SentryInterceptor } from 'src/common/interceptor/sentry.interceptor';
 
 @Controller('auth')
+@UseInterceptors(SentryInterceptor)
 export class AuthController {
   public constructor(
     private readonly authService: AuthService,

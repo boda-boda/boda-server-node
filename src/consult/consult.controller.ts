@@ -1,10 +1,21 @@
-import { Body, Controller, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import { OnlyAdminGuard } from 'src/common/guard/only-admin.guard';
+import { SentryInterceptor } from 'src/common/interceptor/sentry.interceptor';
 import { ValidateIdPipe } from 'src/common/pipe/validate-id.pipe';
 import { ConsultService } from './consult.service';
 import CreateConsultRequest from './dto/create-consult-request';
 
 @Controller('consult')
+@UseInterceptors(SentryInterceptor)
 export class ConsultController {
   public constructor(private readonly consultService: ConsultService) {}
 

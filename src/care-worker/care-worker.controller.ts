@@ -18,6 +18,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Request } from 'express';
 import { OnlyCareCenterGuard } from 'src/common/guard/only-care-center.guard';
+import { SentryInterceptor } from 'src/common/interceptor/sentry.interceptor';
 import { ValidateIdPipe } from 'src/common/pipe/validate-id.pipe';
 import { getConnection } from 'typeorm';
 import { CareWorkerService } from './care-worker.service';
@@ -25,6 +26,7 @@ import CareWorkerResponse from './dto/care-worker-response';
 import { CareWorkerScheduleRequest, CreateWorkerRequest } from './dto/create-worker-request';
 
 @Controller('care-worker')
+@UseInterceptors(SentryInterceptor)
 export class CareWorkerController {
   public constructor(private readonly careWorkerService: CareWorkerService) {}
 

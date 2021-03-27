@@ -2,6 +2,8 @@ import * as dotenv from 'dotenv';
 import { NestFactory } from '@nestjs/core';
 import * as cookieParser from 'cookie-parser';
 import { ValidationPipe } from '@nestjs/common';
+import * as Sentry from '@sentry/node';
+import * as Tracing from '@sentry/tracing';
 
 import { AppModule } from './app.module';
 
@@ -33,6 +35,11 @@ async function bootstrap() {
       disableErrorMessages: process.env.NODE_ENV !== 'DEV',
     }),
   );
+
+  Sentry.init({
+    dsn: process.env.SENTRY_DSN,
+    tracesSampleRate: 1.0,
+  });
 
   const port = parseInt(process.env.PORT);
   await app.listen(port);
