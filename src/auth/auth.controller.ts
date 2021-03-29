@@ -22,10 +22,12 @@ import { AuthService } from './auth.service';
 import * as jwt from 'jsonwebtoken';
 import CareCenterResponse from 'src/care-center/dto/care-center-response.dto';
 import { OnlyAdminGuard } from 'src/common/guard/only-admin.guard';
-import ChangePasswordRequest from './dto/change-password-request';
+import ChangePasswordWithEmailRequest from './dto/change-password-with-email-request';
 import UpdatePasswordFromEmailRequest from './dto/update-password-from-email-request';
 import { getConnection } from 'typeorm';
 import { SentryInterceptor } from 'src/common/interceptor/sentry.interceptor';
+import { OnlyCareCenterGuard } from 'src/common/guard/only-care-center.guard';
+import ChangePasswordRequest from './dto/change-password-request';
 
 @Controller('auth')
 @UseInterceptors(SentryInterceptor)
@@ -152,8 +154,31 @@ export class AuthController {
     });
   }
 
+  @Post('reset-password')
+  @UseGuards(OnlyCareCenterGuard)
+  public async resetPassword(
+    @Req() request: Request,
+    @Body() { password, newPassword }: ChangePasswordRequest,
+    @Res() response: Response,
+  ) {
+    const careCenter = await this.careCenterService.getCareCenterById(request.careCenter.id);
+    const isPasswordCorrect = await this.authService.checkPassword(careCenter, password);
+
+    if (!isPasswordCorrect) {
+      throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
+    }
+
+    await this.careCenterService.updatePassword(newPassword, request.careCenter.id);
+
+    response.clearCookie('refreshToken');
+    response.setHeader('Access-Control-Allow-Credentials', 'true');
+    response.send(null);
+  }
+
   @Post('reset-password/email')
-  public async sendChangeCareCenterPasswordEmail(@Body() { email }: ChangePasswordRequest) {
+  public async sendChangeCareCenterPasswordEmail(
+    @Body() { email }: ChangePasswordWithEmailRequest,
+  ) {
     const targetCareCenter = await this.careCenterService.findCareCenterByEmail(email);
     if (!targetCareCenter) {
       throw new NotFoundException('해당 이메일로 등록된 센터가 존재하지 않습니다.');

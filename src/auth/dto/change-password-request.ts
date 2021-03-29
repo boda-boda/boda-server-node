@@ -1,7 +1,11 @@
-import { IsEmail, IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export default class ChangePasswordRequest {
-  @IsEmail()
   @IsNotEmpty()
-  public email: string;
+  @IsString()
+  public password: string;
+
+  @IsNotEmpty()
+  @IsString()
+  public newPassword: string;
 }
