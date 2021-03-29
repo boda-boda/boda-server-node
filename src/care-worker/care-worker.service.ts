@@ -99,12 +99,15 @@ export class CareWorkerService {
     const capabilityMeta = careWorkerRequest.careWorkerCapabilities.map((key) => {
       return { type: CAPABILITY, key };
     });
-    await this.careWorkerMetaService.updateCareWorkerMeta(capabilityMeta, targetWorker.id);
 
     const religionMeta = careWorkerRequest.careWorkerReligions.map((key) => {
       return { type: RELIGION, key };
     });
-    await this.careWorkerMetaService.updateCareWorkerMeta(religionMeta, targetWorker.id);
+
+    await this.careWorkerMetaService.updateCareWorkerMeta(
+      [...capabilityMeta, ...religionMeta],
+      targetWorker.id,
+    );
 
     await this.careWorkerScheduleService.updateCareWorkerSchedule(
       careWorkerRequest.careWorkerSchedules,

@@ -65,10 +65,11 @@ export class CareWorkerMetaService {
     });
     const capabilityMeta = metas.filter((meta) => meta.type === CAPABILITY);
     const capabilityMetaRequest = careWokerMetas
+      .filter((meta) => meta.type === CAPABILITY)
       .map((meta) => {
         return { ...meta, careWorkerId };
-      })
-      .filter((meta) => meta.type === CAPABILITY);
+      });
+
     const updatedCapabilityMeta = capabilityMetaRequest.map((meta, idx) => {
       if (capabilityMeta.length > idx) {
         return this.careWorkerMetaRepository.merge(capabilityMeta[idx], meta);
@@ -84,14 +85,14 @@ export class CareWorkerMetaService {
 
     if (removedCapabilityMeta.length)
       await this.careWorkerMetaRepository.remove(removedCapabilityMeta);
-    await this.careWorkerMetaRepository.save(updatedCapabilityMeta);
 
     const religionMeta = metas.filter((meta) => meta.type === RELIGION);
     const religionMetaRequest = careWokerMetas
+      .filter((meta) => meta.type === RELIGION)
       .map((meta) => {
         return { ...meta, careWorkerId };
-      })
-      .filter((meta) => meta.type === RELIGION);
+      });
+
     const updatedReligionMeta = religionMetaRequest.map((meta, idx) => {
       if (religionMeta.length > idx) {
         return this.careWorkerMetaRepository.merge(religionMeta[idx], meta);
@@ -106,6 +107,6 @@ export class CareWorkerMetaService {
     );
 
     if (removedReligionMeta.length) await this.careWorkerMetaRepository.remove(removedReligionMeta);
-    await this.careWorkerMetaRepository.save(updatedReligionMeta);
+    await this.careWorkerMetaRepository.save([...updatedReligionMeta, ...updatedCapabilityMeta]);
   }
 }
