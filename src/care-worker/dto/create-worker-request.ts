@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsNotEmpty, IsString, ValidateNested } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString, ValidateNested } from 'class-validator';
 
 class CareWorkerRequest {
   @IsNotEmpty()
@@ -41,12 +41,16 @@ class CareWorkerAreaRequest {
 export class CareWorkerScheduleRequest {
   public days: string[];
 
+  @IsNumber()
   public startHour: number;
 
+  @IsNumber()
   public startMinute: number;
 
+  @IsNumber()
   public endHour: number;
 
+  @IsNumber()
   public endMinute: number;
 }
 
