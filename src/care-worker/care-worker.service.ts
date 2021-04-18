@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CAPABILITY, RELIGION } from 'src/constant';
 import { Repository } from 'typeorm';
 import { CareWorkerEntity } from './care-worker.entity';
-import { CreateWorkerRequest } from './dto/create-worker-request';
+import { CreateCareWorkerRequest } from './dto/create-worker-request';
 import * as AWS from 'aws-sdk';
 import { v4 } from 'uuid';
 import { CareWorkerCareerService } from 'src/care-worker-career/care-worker-career.service';
@@ -44,7 +44,7 @@ export class CareWorkerService {
     });
   }
 
-  public async createCareWorker(careCenterId: string, careWorkerRequest: CreateWorkerRequest) {
+  public async createCareWorker(careCenterId: string, careWorkerRequest: CreateCareWorkerRequest) {
     const newCareWorker = this.careWorkerRepository.create({
       ...careWorkerRequest.careWorker,
       careCenterId,
@@ -79,7 +79,7 @@ export class CareWorkerService {
     return targetWorker;
   }
 
-  public async updateCareWorker(careCenterId: string, careWorkerRequest: CreateWorkerRequest) {
+  public async updateCareWorker(careCenterId: string, careWorkerRequest: CreateCareWorkerRequest) {
     const targetWorker = await this.careWorkerRepository.findOne({
       where: {
         id: careWorkerRequest.id,

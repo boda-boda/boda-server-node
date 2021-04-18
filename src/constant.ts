@@ -28,3 +28,5 @@ export interface Active {
 
 export const weekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 export const weekDaysKor = ['월', '화', '수', '목', '금', '토', '일'];
+
+export const outerCareWorkerScheduleTypes = ['오전', '오후', '종일', ''];

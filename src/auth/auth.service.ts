@@ -72,8 +72,8 @@ export class AuthService {
     return verifyEmailEntity;
   }
 
-  public async sendResetPasswordEmail(id: number, email: string, key: string) {
-    await this.mailService.sendResetPasswordEmail(id, email, key);
+  public sendResetPasswordEmail(id: number, email: string, key: string) {
+    return this.mailService.sendResetPasswordEmail(id, email, key);
   }
 
   public async validateResetPasswordEmail(id: number, key: string) {
@@ -91,8 +91,8 @@ export class AuthService {
     return verifyEmailEntity;
   }
 
-  public async setVerifyEmailEntityExpired(verifyEmailEntity: VerifyEmailEntity) {
+  public setVerifyEmailEntityExpired(verifyEmailEntity: VerifyEmailEntity) {
     verifyEmailEntity.isKeyActive = false;
-    await this.verifyEmailRepository.save(verifyEmailEntity);
+    return this.verifyEmailRepository.save(verifyEmailEntity);
   }
 }

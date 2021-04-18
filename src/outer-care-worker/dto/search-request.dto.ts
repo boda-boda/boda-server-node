@@ -1,17 +1,16 @@
-class Schedule {
-  public date: string[];
-  public startHour: number;
-  public startMinute: number;
-  public endHour: number;
-  public endMinute: number;
-}
+import { IsNumberString } from 'class-validator';
 
 export default class SearchRequest {
-  public name?: string;
   public city?: string;
   public gu?: string;
   public dong?: string;
-  public schedule?: Schedule[];
-  public capabilities: string[];
-  public religions: string[];
+  public schedule?: string;
+
+  @IsNumberString()
+  public from: number;
+  @IsNumberString()
+  public size: number;
+
+  public capabilities?: string[];
+  public religions?: string[];
 }

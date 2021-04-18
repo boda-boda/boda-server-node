@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CareCenterEntity } from './care-center.entity';
 import Bcrypt from 'src/common/lib/bcrypt';
 import UpdateCareCenterRequest from './dto/update-care-center-request.dto';
-import LoginRequestDTO from './dto/login-request.dto';
+import CreateCareCenterRequest from 'src/auth/dto/create-care-center-request';
 
 @Injectable()
 export class CareCenterService {
@@ -27,7 +27,11 @@ export class CareCenterService {
     return this.careCenterRepository.findOne({ where: { name, isDeleted: false } });
   }
 
-  public async createCareCenter({ name, password }: LoginRequestDTO): Promise<CareCenterEntity> {
+  public async createCareCenter({
+    name,
+    password,
+    email,
+  }: CreateCareCenterRequest): Promise<CareCenterEntity> {
     const duplicateCareCenter = await this.careCenterRepository.findOne({
       where: { name, isDeleted: false },
     });
@@ -42,6 +46,7 @@ export class CareCenterService {
       name,
       salt,
       password: hashedPassword,
+      email,
       type: 'care-center',
     };
 
