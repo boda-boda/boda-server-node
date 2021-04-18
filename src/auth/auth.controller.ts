@@ -16,7 +16,7 @@ import {
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { CareCenterService } from 'src/care-center/care-center.service';
-import LoginRequestDTO from 'src/care-center/dto/login-request.dto';
+import LoginRequestDTO from 'src/auth/dto/login-request.dto';
 import { timer } from 'src/common/lib/time';
 import { AuthService } from './auth.service';
 import * as jwt from 'jsonwebtoken';
@@ -28,6 +28,7 @@ import { getConnection } from 'typeorm';
 import { SentryInterceptor } from 'src/common/interceptor/sentry.interceptor';
 import { OnlyCareCenterGuard } from 'src/common/guard/only-care-center.guard';
 import ChangePasswordRequest from './dto/change-password-request';
+import CreateCareCenterRequest from './dto/create-care-center-request';
 
 @Controller('auth')
 @UseInterceptors(SentryInterceptor)
@@ -126,14 +127,17 @@ export class AuthController {
   @Header('Cache-control', 'no-cache, no-store, must-revalidate')
   @Header('Access-Control-Allow-Credentials', 'true')
   @UseGuards(OnlyAdminGuard)
-  public async create(@Res() response: Response, @Body() { name, password }: LoginRequestDTO) {
+  public async create(
+    @Res() response: Response,
+    @Body() { name, password, email }: CreateCareCenterRequest,
+  ) {
     const duplicateCareCenter = await this.careCenterService.getCareCenterByName(name);
 
     if (duplicateCareCenter) {
       throw new ConflictException('이미 존재하는 계정입니다.');
     }
 
-    const result = await this.careCenterService.createCareCenter({ name, password });
+    const result = await this.careCenterService.createCareCenter({ name, password, email });
 
     if (!result) {
       throw new InternalServerErrorException('사용자 생성 안됨 오류');

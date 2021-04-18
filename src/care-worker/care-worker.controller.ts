@@ -16,14 +16,14 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { request, Request } from 'express';
+import { Request } from 'express';
 import { OnlyCareCenterGuard } from 'src/common/guard/only-care-center.guard';
 import { SentryInterceptor } from 'src/common/interceptor/sentry.interceptor';
 import { ValidateIdPipe } from 'src/common/pipe/validate-id.pipe';
 import { getConnection } from 'typeorm';
 import { CareWorkerService } from './care-worker.service';
 import CareWorkerResponse from './dto/care-worker-response';
-import { CareWorkerScheduleRequest, CreateWorkerRequest } from './dto/create-worker-request';
+import { CareWorkerScheduleRequest, CreateCareWorkerRequest } from './dto/create-worker-request';
 
 @Controller('care-worker')
 @UseInterceptors(SentryInterceptor)
@@ -75,7 +75,7 @@ export class CareWorkerController {
   @UseGuards(OnlyCareCenterGuard)
   public async createCareWorker(
     @Req() request: Request,
-    @Body() createWorkerRequest: CreateWorkerRequest,
+    @Body() createWorkerRequest: CreateCareWorkerRequest,
   ) {
     if (!request.careCenter.id) {
       throw new InternalServerErrorException('JWT가 이상합니다.');
@@ -115,7 +115,7 @@ export class CareWorkerController {
   @UseGuards(OnlyCareCenterGuard)
   public async updateCareCenter(
     @Req() request: Request,
-    @Body() createWorkerRequest: CreateWorkerRequest,
+    @Body() createWorkerRequest: CreateCareWorkerRequest,
   ) {
     if (!request.careCenter.id) {
       throw new InternalServerErrorException('JWT가 이상합니다.');

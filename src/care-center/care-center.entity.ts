@@ -1,6 +1,7 @@
 import { CareCenterMetaEntity } from 'src/care-center-meta/care-center-meta.entity';
 import { CareWorkerEntity } from 'src/care-worker/care-worker.entity';
 import { BaseEntity } from 'src/common/entity/base';
+import { CenterWorkerJoinTableEntity } from 'src/outer-care-worker/entity/center-worker-join-table.entity';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany, Unique } from 'typeorm';
 
 @Entity('care-center')
@@ -95,4 +96,10 @@ export class CareCenterEntity extends BaseEntity {
 
   @OneToMany(() => CareCenterMetaEntity, (careCenterMeta) => careCenterMeta.careCenter)
   public careCenterMetas: CareCenterMetaEntity[];
+
+  @OneToMany(
+    () => CenterWorkerJoinTableEntity,
+    (centerWorkerJoinTable) => centerWorkerJoinTable.careCenter,
+  )
+  public connectedOuterWorkers: CenterWorkerJoinTableEntity[];
 }

@@ -13,6 +13,7 @@ import { AuthModule } from './auth/auth.module';
 import { CareWorkerAreaModule } from './care-worker-area/care-worker-area.module';
 import { CareWorkerCareerModule } from './care-worker-career/care-worker-career.module';
 import { MailModule } from './mail/mail.module';
+import { OuterCareWorkerModule } from './outer-care-worker/outer-care-worker.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { MailModule } from './mail/mail.module';
     CareWorkerAreaModule,
     CareWorkerCareerModule,
     MailModule,
+    OuterCareWorkerModule,
   ],
   controllers: [AppController],
   providers: [AppService],

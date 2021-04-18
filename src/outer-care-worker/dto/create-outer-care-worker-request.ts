@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsNotEmpty, IsNumber, IsString, ValidateNested } from 'class-validator';
+import { IsNotEmpty, IsString, ValidateNested } from 'class-validator';
 
 class CareWorkerRequest {
   @IsNotEmpty()
@@ -38,23 +38,7 @@ class CareWorkerAreaRequest {
   public dong: string;
 }
 
-export class CareWorkerScheduleRequest {
-  public days: string[];
-
-  @IsNumber()
-  public startHour: number;
-
-  @IsNumber()
-  public startMinute: number;
-
-  @IsNumber()
-  public endHour: number;
-
-  @IsNumber()
-  public endMinute: number;
-}
-
-export class CreateCareWorkerRequest {
+export class CreateOuterCareWorkerRequest {
   public id: string;
 
   @ValidateNested({ each: true })
@@ -68,9 +52,8 @@ export class CreateCareWorkerRequest {
   @IsString({ each: true })
   public careWorkerReligions: string[];
 
-  @ValidateNested({ each: true })
-  @Type(() => CareWorkerScheduleRequest)
-  public careWorkerSchedules: CareWorkerScheduleRequest[];
+  @IsString()
+  public careWorkerSchedule: string;
 
   @ValidateNested({ each: true })
   @Type(() => CareWorkerCareerRequest)
