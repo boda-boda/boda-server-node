@@ -85,7 +85,7 @@ export class SearchService {
 
     if (searchRequest.dong) {
       filter.push({
-        term: {
+        terms: {
           'careWorkerAreas.dong.keyword': ['', searchRequest.dong],
         },
       });
@@ -104,7 +104,7 @@ export class SearchService {
     if (searchRequest.religions?.length) {
       searchRequest.religions.forEach((relig) =>
         filter.push({
-          terms: {
+          term: {
             'careWorkerReligions.keyword': relig,
           },
         }),
