@@ -11,6 +11,10 @@ class CareWorkerRequest {
 
   public phoneNumber: string;
 
+  public workingState: string;
+
+  public licenseDate: string;
+
   public profile: string;
 
   public zipCode: string;
@@ -28,6 +32,8 @@ class CareWorkerCareerRequest {
   public customer: string;
 
   public duration: string;
+
+  public memo: string;
 }
 
 class CareWorkerAreaRequest {

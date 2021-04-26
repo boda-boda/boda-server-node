@@ -25,6 +25,12 @@ export class CareWorkerCareerEntity {
   public duration: string;
 
   @Column({
+    type: 'varchar',
+    nullable: true,
+  })
+  public memo: string;
+
+  @Column({
     nullable: false,
   })
   public careWorkerId: string;
