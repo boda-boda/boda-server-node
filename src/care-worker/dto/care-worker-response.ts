@@ -18,6 +18,7 @@ export default class CareWorkerResponse {
     this.phoneNumber = careWorkerEntity.phoneNumber;
     this.workingState = careWorkerEntity.workingState;
     this.licenseDate = careWorkerEntity.licenseDate;
+    this.time = careWorkerEntity.time;
     this.zipCode = careWorkerEntity.zipCode;
     this.address = careWorkerEntity.address;
     this.detailAddress = careWorkerEntity.detailAddress;
@@ -55,6 +56,7 @@ export default class CareWorkerResponse {
   public phoneNumber: string;
   public workingState: string;
   public licenseDate: string;
+  public time: string;
   public profile: string;
   public zipCode: string;
   public address: string;
