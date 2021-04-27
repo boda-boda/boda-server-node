@@ -28,6 +28,8 @@ class CareWorkerCareerRequest {
   public customer: string;
 
   public duration: string;
+
+  public memo: string;
 }
 
 class CareWorkerAreaRequest {
