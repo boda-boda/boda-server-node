@@ -15,6 +15,8 @@ class CareWorkerRequest {
 
   public licenseDate: string;
 
+  public time: string;
+
   public profile: string;
 
   public zipCode: string;
