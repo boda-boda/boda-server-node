@@ -6,10 +6,12 @@ export default class CareWorkerCareerResponse {
     this.workplace = careWorkerCareerEntity.workplace;
     this.recipient = careWorkerCareerEntity.recipient;
     this.duration = careWorkerCareerEntity.duration;
+    this.memo = careWorkerCareerEntity.memo;
   }
 
   public id: number;
   public workplace: string;
   public recipient: string;
   public duration: string;
+  public memo: string;
 }

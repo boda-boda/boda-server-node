@@ -39,6 +39,21 @@ export class CareWorkerEntity extends BaseEntity {
   public phoneNumber: string;
 
   @Column({
+    type: 'varchar',
+  })
+  public workingState: string;
+
+  @Column({
+    type: 'date',
+  })
+  public licenseDate: string;
+
+  @Column({
+    type: 'varchar',
+  })
+  public time: string;
+
+  @Column({
     type: 'text',
   })
   public profile: string;
