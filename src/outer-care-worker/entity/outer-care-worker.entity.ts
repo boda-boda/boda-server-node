@@ -22,7 +22,7 @@ export class OuterCareWorkerEntity extends BaseEntity {
 
   @Column({
     type: 'date',
-    nullable: false,
+    nullable: true,
   })
   public birthDay: string;
 

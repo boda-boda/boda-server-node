@@ -26,7 +26,7 @@ export class CareWorkerEntity extends BaseEntity {
 
   @Column({
     type: 'date',
-    nullable: false,
+    nullable: true,
   })
   public birthDay: string;
 
@@ -45,6 +45,7 @@ export class CareWorkerEntity extends BaseEntity {
 
   @Column({
     type: 'date',
+    nullable: true,
   })
   public licenseDate: string;
 
