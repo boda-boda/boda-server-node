@@ -14,6 +14,7 @@ import { CareWorkerAreaModule } from './care-worker-area/care-worker-area.module
 import { CareWorkerCareerModule } from './care-worker-career/care-worker-career.module';
 import { MailModule } from './mail/mail.module';
 import { OuterCareWorkerModule } from './outer-care-worker/outer-care-worker.module';
+import { RecipientModule } from './recipient/recipient.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { OuterCareWorkerModule } from './outer-care-worker/outer-care-worker.mod
     CareWorkerCareerModule,
     MailModule,
     OuterCareWorkerModule,
+    RecipientModule,
   ],
   controllers: [AppController],
   providers: [AppService],
