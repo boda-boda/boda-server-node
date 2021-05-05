@@ -3,6 +3,7 @@ import { Entity, Column, PrimaryGeneratedColumn, JoinColumn, ManyToOne } from 't
 import { BaseEntity } from 'src/common/entity/base';
 import { RecipientEntity } from 'src/recipient/entity/recipient.entity';
 import { OuterCareWorkerEntity } from 'src/outer-care-worker/entity/outer-care-worker.entity';
+import { MatchingProposalStatus } from '../constant';
 
 @Entity('matching-proposal')
 export class MatchingProposalEntity extends BaseEntity {
@@ -20,6 +21,14 @@ export class MatchingProposalEntity extends BaseEntity {
     nullable: true,
   })
   public description: string;
+
+  @Column({
+    type: 'varchar',
+    length: 100,
+    nullable: true,
+    default: 'NOT_READ',
+  })
+  public status: MatchingProposalStatus; // TODO: 좋은 방법이 없을까요
 
   @Column({
     nullable: false,

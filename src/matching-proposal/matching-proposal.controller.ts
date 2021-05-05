@@ -9,7 +9,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { Request } from 'express';
-import { CareWorkerService } from 'src/care-worker/care-worker.service';
 import { OnlyCareCenterGuard } from 'src/common/guard/only-care-center.guard';
 import { OuterCareWorkerService } from 'src/outer-care-worker/service/outer-care-worker.service';
 import { RecipientService } from 'src/recipient/recipient.service';

@@ -13,10 +13,12 @@ export default class matchingProposalResponse {
       ? new OuterCareWorkerResponse(m.outerCareWorker)
       : null;
     this.recipient = m.recipient; // ResponseDto가 없슴
+    this.status = m.status;
   }
 
   public id: string;
   public description: string;
+  public status: string;
   public careCenter: CareCenterResponse;
   public outerCareWorker: OuterCareWorkerResponse;
   public recipient: RecipientEntity;
