@@ -2,7 +2,7 @@ import { CareCenterEntity } from 'src/care-center/care-center.entity';
 import { Entity, Column, PrimaryGeneratedColumn, JoinColumn, ManyToOne } from 'typeorm';
 import { BaseEntity } from 'src/common/entity/base';
 import { RecipientEntity } from 'src/recipient/entity/recipient.entity';
-import { CareWorkerEntity } from 'src/care-worker/care-worker.entity';
+import { OuterCareWorkerEntity } from 'src/outer-care-worker/entity/outer-care-worker.entity';
 
 @Entity('matching-proposal')
 export class MatchingProposalEntity extends BaseEntity {
@@ -29,7 +29,7 @@ export class MatchingProposalEntity extends BaseEntity {
   @Column({
     nullable: false,
   })
-  public careWorkerId: string;
+  public outerCareWorkerId: string;
 
   @Column({
     nullable: false,
@@ -45,14 +45,14 @@ export class MatchingProposalEntity extends BaseEntity {
   })
   public careCenter: CareCenterEntity;
 
-  @ManyToOne(() => CareWorkerEntity, (careWorker) => careWorker.machingProposals, {
+  @ManyToOne(() => OuterCareWorkerEntity, (outerCareWorker) => outerCareWorker.machingProposals, {
     nullable: false,
   })
   @JoinColumn({
-    name: 'careWorkerId',
+    name: 'outerCareWorkerId',
     referencedColumnName: 'id',
   })
-  public careWorker: CareWorkerEntity;
+  public outerCareWorker: OuterCareWorkerEntity;
 
   @ManyToOne(() => RecipientEntity, (recipient) => recipient.machingProposals, {
     nullable: false,

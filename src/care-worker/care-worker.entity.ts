@@ -109,7 +109,4 @@ export class CareWorkerEntity extends BaseEntity {
 
   @OneToMany(() => CareWorkerCareerEntity, (careWorkerCareer) => careWorkerCareer.careWorker)
   public careWorkerCareers: CareWorkerCareerEntity[];
-
-  @OneToMany(() => MatchingProposalEntity, (matchingProposal) => matchingProposal.careCenter)
-  public machingProposals: MatchingProposalEntity[];
 }
