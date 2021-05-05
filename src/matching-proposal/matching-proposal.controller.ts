@@ -53,8 +53,8 @@ export class MatchingProposalController {
     if (!isValidCareWorker) throw new NotFoundException('요청하신 요양보호사가 존재하지 않습니디.');
 
     const recipient = await this.recipientService.checkRecipientValid(
-      createMatchingProposalRequest.recipientId,
       request.careCenter.id,
+      createMatchingProposalRequest.recipientId,
     );
 
     if (!recipient) throw new NotFoundException('요청하신 수급자가 존재하지 않습니디.');
