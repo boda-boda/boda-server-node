@@ -7,7 +7,7 @@ export default class CreateMatchingProposalRequest {
   public description: string;
 
   @IsString()
-  public careWorkerId: string;
+  public outerCareWorkerId: string;
 
   @IsString()
   public recipientId: string;

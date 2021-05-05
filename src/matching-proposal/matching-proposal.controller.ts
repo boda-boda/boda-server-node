@@ -47,7 +47,7 @@ export class MatchingProposalController {
     @Body() createMatchingProposalRequest: CreateMatchingProposalRequest,
   ) {
     const isValidCareWorker = await this.outerCareWorkerService.getOuterCareWorkerById(
-      createMatchingProposalRequest.careWorkerId,
+      createMatchingProposalRequest.outerCareWorkerId,
     );
 
     if (!isValidCareWorker) throw new NotFoundException('요청하신 요양보호사가 존재하지 않습니디.');
