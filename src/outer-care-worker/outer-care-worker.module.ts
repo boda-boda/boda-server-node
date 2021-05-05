@@ -18,5 +18,6 @@ import { OuterCareWorkerService } from './service/outer-care-worker.service';
   ],
   controllers: [OuterCareWorkerController],
   providers: [OuterCareWorkerService],
+  exports: [OuterCareWorkerService],
 })
 export class OuterCareWorkerModule {}

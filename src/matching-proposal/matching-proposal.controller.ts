@@ -11,6 +11,7 @@ import {
 import { Request } from 'express';
 import { CareWorkerService } from 'src/care-worker/care-worker.service';
 import { OnlyCareCenterGuard } from 'src/common/guard/only-care-center.guard';
+import { OuterCareWorkerService } from 'src/outer-care-worker/service/outer-care-worker.service';
 import { RecipientService } from 'src/recipient/recipient.service';
 import { SmsService } from 'src/sms/sms.service';
 import CreateMatchingProposalRequest from './dto/create-matching-proposal-request.dto';
@@ -20,7 +21,7 @@ import { MatchingProposalService } from './matching-proposal.service';
 export class MatchingProposalController {
   public constructor(
     private readonly matchingProposalService: MatchingProposalService,
-    private readonly careWorkerService: CareWorkerService,
+    private readonly outerCareWorkerService: OuterCareWorkerService,
     private readonly recipientService: RecipientService,
     private readonly smsService: SmsService,
   ) {}
@@ -45,9 +46,8 @@ export class MatchingProposalController {
     @Req() request: Request,
     @Body() createMatchingProposalRequest: CreateMatchingProposalRequest,
   ) {
-    const isValidCareWorker = await this.careWorkerService.checkCareCenterValid(
+    const isValidCareWorker = await this.outerCareWorkerService.getOuterCareWorkerById(
       createMatchingProposalRequest.careWorkerId,
-      request.careCenter.id,
     );
 
     if (!isValidCareWorker) throw new NotFoundException('요청하신 요양보호사가 존재하지 않습니디.');

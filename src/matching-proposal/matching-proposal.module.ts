@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { CareWorkerModule } from 'src/care-worker/care-worker.module';
+import { OuterCareWorkerModule } from 'src/outer-care-worker/outer-care-worker.module';
 import { RecipientModule } from 'src/recipient/recipient.module';
 import { SmsModule } from 'src/sms/sms.module';
 import { MatchingProposalController } from './matching-proposal.controller';
@@ -10,8 +10,8 @@ import { MatchingProposalService } from './matching-proposal.service';
 @Module({
   imports: [
     TypeOrmModule.forFeature([MatchingProposalEntity]),
-    CareWorkerModule,
     RecipientModule,
+    OuterCareWorkerModule,
     SmsModule,
   ],
   controllers: [MatchingProposalController],
