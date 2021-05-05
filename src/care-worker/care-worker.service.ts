@@ -23,6 +23,10 @@ export class CareWorkerService {
     public readonly careWorkerRepository: Repository<CareWorkerEntity>,
   ) {}
 
+  public checkCareCenterValid(id: string, careCenterId: string) {
+    return this.careWorkerRepository.findOne({ where: { id, careCenterId } });
+  }
+
   public getCareWorkerById(id: string, careCenterId: string) {
     return this.careWorkerRepository.findOne({
       relations: ['careWorkerMetas', 'careWorkerSchedules', 'careWorkerAreas', 'careWorkerCareers'],

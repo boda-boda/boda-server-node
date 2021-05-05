@@ -15,6 +15,9 @@ import { CareWorkerCareerModule } from './care-worker-career/care-worker-career.
 import { MailModule } from './mail/mail.module';
 import { OuterCareWorkerModule } from './outer-care-worker/outer-care-worker.module';
 import { RecipientModule } from './recipient/recipient.module';
+import { MatchingProposalModule } from './matching-proposal/matching-proposal.module';
+import { SmsModule } from './sms/sms.module';
+import { TestModule } from './test/test.module';
 
 @Module({
   imports: [
@@ -31,6 +34,9 @@ import { RecipientModule } from './recipient/recipient.module';
     MailModule,
     OuterCareWorkerModule,
     RecipientModule,
+    MatchingProposalModule,
+    SmsModule,
+    TestModule,
   ],
   controllers: [AppController],
   providers: [AppService],

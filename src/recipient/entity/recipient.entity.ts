@@ -2,6 +2,7 @@ import { CareCenterEntity } from 'src/care-center/care-center.entity';
 import { Column, PrimaryGeneratedColumn, JoinColumn, ManyToOne, OneToMany, Entity } from 'typeorm';
 import { BaseEntity } from 'src/common/entity/base';
 import { RecipientMetaEntity } from './recipient-meta.entity';
+import { MatchingProposalEntity } from 'src/matching-proposal/matching-proposal.entity';
 
 @Entity('recipient')
 export class RecipientEntity extends BaseEntity {
@@ -32,12 +33,6 @@ export class RecipientEntity extends BaseEntity {
     nullable: false,
   })
   public age: number;
-
-  @Column({
-    type: 'int',
-    nullable: false,
-  })
-  public hourlyWage: number;
 
   @Column({
     type: 'varchar',
@@ -77,6 +72,12 @@ export class RecipientEntity extends BaseEntity {
   public familyType: string;
 
   @Column({
+    type: 'varchar',
+    length: 255,
+  })
+  public religion: string;
+
+  @Column({
     type: 'text',
   })
   public description: string;
@@ -103,4 +104,7 @@ export class RecipientEntity extends BaseEntity {
 
   @OneToMany(() => RecipientMetaEntity, (recipientMeta) => recipientMeta.recipient)
   public recipientMetas: RecipientMetaEntity[];
+
+  @OneToMany(() => MatchingProposalEntity, (matchingProposal) => matchingProposal.careCenter)
+  public machingProposals: MatchingProposalEntity[];
 }

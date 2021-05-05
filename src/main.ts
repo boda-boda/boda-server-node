@@ -3,7 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import * as cookieParser from 'cookie-parser';
 import { ValidationPipe } from '@nestjs/common';
 import * as Sentry from '@sentry/node';
-import * as Tracing from '@sentry/tracing';
+import axios from 'axios';
 
 import { AppModule } from './app.module';
 
@@ -23,6 +23,8 @@ const corsOption = {
   origin: ['https://dolboda.kr', 'https://alpha.dolboda.kr', 'https://www.dol-bom.com'],
   credentials: true,
 };
+
+axios.defaults.headers['Content-Type'] = 'application/json';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

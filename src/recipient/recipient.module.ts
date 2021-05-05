@@ -9,5 +9,6 @@ import { RecipientService } from './recipient.service';
   imports: [TypeOrmModule.forFeature([RecipientEntity, RecipientMetaEntity])],
   controllers: [RecipientController],
   providers: [RecipientService],
+  exports: [RecipientService],
 })
 export class RecipientModule {}

@@ -16,8 +16,8 @@ export default class RecipientResponse {
     this.familyType = r.familyType;
     this.description = r.description;
     this.careCenterId = r.careCenterId;
-    this.hourlyWage = r.hourlyWage;
     this.note = r.note;
+    this.religion = r.religion;
   }
 
   public id: string;
@@ -33,6 +33,6 @@ export default class RecipientResponse {
   public familyType: string;
   public description: string;
   public careCenterId: string;
-  public hourlyWage: number;
   public note: string;
+  public religion: string;
 }

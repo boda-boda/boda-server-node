@@ -5,6 +5,7 @@ import { CareWorkerAreaEntity } from 'src/care-worker-area/care-worker-area.enti
 import { Entity, Column, PrimaryGeneratedColumn, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { CareWorkerCareerEntity } from 'src/care-worker-career/care-worker-career.entity';
 import { BaseEntity } from 'src/common/entity/base';
+import { MatchingProposalEntity } from 'src/matching-proposal/matching-proposal.entity';
 
 @Entity('care-worker')
 export class CareWorkerEntity extends BaseEntity {
@@ -108,4 +109,7 @@ export class CareWorkerEntity extends BaseEntity {
 
   @OneToMany(() => CareWorkerCareerEntity, (careWorkerCareer) => careWorkerCareer.careWorker)
   public careWorkerCareers: CareWorkerCareerEntity[];
+
+  @OneToMany(() => MatchingProposalEntity, (matchingProposal) => matchingProposal.careCenter)
+  public machingProposals: MatchingProposalEntity[];
 }

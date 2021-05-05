@@ -22,6 +22,7 @@ export default class UpsertRecipientRequest {
   public careCenterId: string;
   public hourlyWage: number;
   public note: string;
+  public religion: string;
 
   @IsString({ each: true })
   public recipientCapabilities: string[];

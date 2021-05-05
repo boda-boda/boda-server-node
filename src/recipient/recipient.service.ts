@@ -26,6 +26,10 @@ export class RecipientService {
     });
   }
 
+  public checkRecipientValid(careCenterId: string, id: string) {
+    return this.recipientRepository.findOne({ where: { id, careCenterId } });
+  }
+
   public getRecipientById(careCenterId: string, id: string) {
     return this.recipientRepository.findOne({
       relations: ['recipientMetas'],

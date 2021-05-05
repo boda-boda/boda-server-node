@@ -3,6 +3,7 @@ import { CareWorkerEntity } from 'src/care-worker/care-worker.entity';
 import { BaseEntity } from 'src/common/entity/base';
 import { CenterWorkerJoinTableEntity } from 'src/outer-care-worker/entity/center-worker-join-table.entity';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany, Unique } from 'typeorm';
+import { MatchingProposalEntity } from 'src/matching-proposal/matching-proposal.entity';
 
 @Entity('care-center')
 @Unique('UQ_NAME', ['name'])
@@ -102,4 +103,7 @@ export class CareCenterEntity extends BaseEntity {
     (centerWorkerJoinTable) => centerWorkerJoinTable.careCenter,
   )
   public connectedOuterWorkers: CenterWorkerJoinTableEntity[];
+
+  @OneToMany(() => MatchingProposalEntity, (matchingProposal) => matchingProposal.careCenter)
+  public machingProposals: MatchingProposalEntity[];
 }

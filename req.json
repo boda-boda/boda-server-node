@@ -1,0 +1,13 @@
+{
+  "type": "SMS",
+  "contentType": "COMM",
+  "countryCode": "82",
+  "from": "01020140794",
+  "content": "안녕하세요오",
+  "messages": [
+    {
+      "to": "01020140794",
+      "content": "제발받아라"
+    }
+  ]
+}
