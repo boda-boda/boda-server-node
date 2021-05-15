@@ -14,6 +14,7 @@ import { OuterCareWorkerService } from 'src/outer-care-worker/service/outer-care
 import { RecipientService } from 'src/recipient/recipient.service';
 import { SmsService } from 'src/sms/sms.service';
 import CreateMatchingProposalRequest from './dto/create-matching-proposal-request.dto';
+import MatchingProposalResponse from './dto/matching-proposal-response.dto';
 import { MatchingProposalService } from './matching-proposal.service';
 
 @Controller('matching-proposal')
@@ -28,15 +29,22 @@ export class MatchingProposalController {
   @Get('/')
   @UseGuards(OnlyCareCenterGuard)
   public async getMatchingProposalsOfCareCenter(@Req() request: Request) {
-    return await this.matchingProposalService.getMatchingProposalsOfCareCenter(
+    const matchingProposals = await this.matchingProposalService.getMatchingProposalsOfCareCenter(
       request.careCenter.id,
     );
+
+    return matchingProposals.map((m) => new MatchingProposalResponse(m));
   }
 
   @Get('/:id')
   @UseGuards(OnlyCareCenterGuard)
   public async getMatchingProposalById(@Req() request: Request, @Param('id') id: string) {
-    return await this.matchingProposalService.getMatchingProposalById(request.careCenter.id, id);
+    const matchingProposal = await this.matchingProposalService.getMatchingProposalById(
+      request.careCenter.id,
+      id,
+    );
+
+    return new MatchingProposalResponse(matchingProposal);
   }
 
   @Post('/')

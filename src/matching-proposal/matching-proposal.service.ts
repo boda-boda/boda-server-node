@@ -13,14 +13,14 @@ export class MatchingProposalService {
 
   public getMatchingProposalById(careCenterId: string, id: string) {
     return this.matchingProposalRespository.findOne({
-      relations: ['careWorker', 'careWorker.meta', 'recipient', 'recipient.meta'],
+      relations: ['outerCareWorker', 'recipient'],
       where: { id, careCenterId },
     });
   }
 
   public getMatchingProposalsOfCareCenter(careCenterId: string) {
     return this.matchingProposalRespository.find({
-      relations: ['careWorker', 'careWorker.meta', 'recipient', 'recipient.meta'],
+      relations: ['outerCareWorker', 'recipient'],
       where: { careCenterId },
     });
   }

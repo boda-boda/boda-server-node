@@ -4,11 +4,10 @@ import OuterCareWorkerResponse from 'src/outer-care-worker/dto/outer-care-worker
 import { RecipientEntity } from 'src/recipient/entity/recipient.entity';
 import { MatchingProposalEntity } from '../matching-proposal.entity';
 
-export default class matchingProposalResponse {
+export default class MatchingProposalResponse {
   public constructor(m: MatchingProposalEntity) {
     this.id = m.id;
     this.description = m.description;
-    this.careCenter = m.careCenter ? new CareCenterResponse(m.careCenter) : null;
     this.outerCareWorker = m.outerCareWorker
       ? new OuterCareWorkerResponse(m.outerCareWorker)
       : null;
@@ -19,7 +18,6 @@ export default class matchingProposalResponse {
   public id: string;
   public description: string;
   public status: string;
-  public careCenter: CareCenterResponse;
   public outerCareWorker: OuterCareWorkerResponse;
   public recipient: RecipientEntity;
 }
