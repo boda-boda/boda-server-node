@@ -78,6 +78,12 @@ export class RecipientEntity extends BaseEntity {
   public religion: string;
 
   @Column({
+    type: 'varchar',
+    length: 255,
+  })
+  public schedule: string;
+
+  @Column({
     type: 'text',
   })
   public description: string;

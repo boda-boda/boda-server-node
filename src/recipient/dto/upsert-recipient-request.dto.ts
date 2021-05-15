@@ -18,11 +18,12 @@ export default class UpsertRecipientRequest {
   public address: string;
   public detailAddress: string;
   public familyType: string;
+  public religion: string;
+  public schedule: string;
   public description: string;
   public careCenterId: string;
   public hourlyWage: number;
   public note: string;
-  public religion: string;
 
   @IsString({ each: true })
   public recipientCapabilities: string[];
