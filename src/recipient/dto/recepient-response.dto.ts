@@ -14,6 +14,8 @@ export default class RecipientResponse {
     this.address = r.address;
     this.detailAddress = r.detailAddress;
     this.familyType = r.familyType;
+    this.religion = r.religion;
+    this.schedule = r.schedule;
     this.description = r.description;
     this.careCenterId = r.careCenterId;
     this.note = r.note;
@@ -31,8 +33,9 @@ export default class RecipientResponse {
   public address: string;
   public detailAddress: string;
   public familyType: string;
+  public religion: string;
+  public schedule: string;
   public description: string;
   public careCenterId: string;
   public note: string;
-  public religion: string;
 }
