@@ -2,6 +2,7 @@ import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { BaseEntity } from 'src/common/entity/base';
 import { CenterWorkerJoinTableEntity } from './center-worker-join-table.entity';
 import { MatchingProposalEntity } from 'src/matching-proposal/matching-proposal.entity';
+import { CareWorkerMetaEntity } from 'src/care-worker-meta/care-worker-meta.entity';
 
 @Entity('outer-care-worker')
 export class OuterCareWorkerEntity extends BaseEntity {
@@ -74,6 +75,9 @@ export class OuterCareWorkerEntity extends BaseEntity {
     (centerWorkerJointable) => centerWorkerJointable.outerCareWorker,
   )
   public connectedCenters: CenterWorkerJoinTableEntity[];
+
+  @OneToMany(() => CareWorkerMetaEntity, (careWorkerMeta) => careWorkerMeta.careWorker)
+  public careWorkerMetas: CareWorkerMetaEntity[];
 
   @OneToMany(() => MatchingProposalEntity, (matchingProposal) => matchingProposal.outerCareWorker)
   public machingProposals: MatchingProposalEntity[];
