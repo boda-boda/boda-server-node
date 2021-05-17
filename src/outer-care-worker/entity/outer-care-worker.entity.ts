@@ -65,6 +65,24 @@ export class OuterCareWorkerEntity extends BaseEntity {
 
   @Column({
     type: 'text',
+    nullable: true,
+  })
+  public licenseDate: string;
+
+  @Column({
+    type: 'text',
+    nullable: true,
+  })
+  public schedule: string;
+
+  @Column({
+    type: 'text',
+    nullable: true,
+  })
+  public religion: string;
+
+  @Column({
+    type: 'text',
     nullable: false,
   })
   public metadata: string;

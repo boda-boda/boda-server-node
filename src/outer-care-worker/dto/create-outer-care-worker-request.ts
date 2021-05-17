@@ -20,6 +20,12 @@ class CareWorkerRequest {
   public detailAddress: string;
 
   public description: string;
+
+  public licenseDate: string;
+
+  public schedule: string;
+
+  public religion: string;
 }
 
 class CareWorkerCareerRequest {
@@ -50,12 +56,6 @@ export class CreateOuterCareWorkerRequest {
 
   @IsString({ each: true })
   public careWorkerCapabilities: string[];
-
-  @IsString({ each: true })
-  public careWorkerReligions: string[];
-
-  @IsString()
-  public careWorkerSchedule: string;
 
   @ValidateNested({ each: true })
   @Type(() => CareWorkerCareerRequest)

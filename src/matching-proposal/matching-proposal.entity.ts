@@ -26,7 +26,7 @@ export class MatchingProposalEntity extends BaseEntity {
     type: 'varchar',
     length: 100,
     nullable: true,
-    default: 'NOT_READ',
+    default: '대기중',
   })
   public status: MatchingProposalStatus; // TODO: 좋은 방법이 없을까요
 

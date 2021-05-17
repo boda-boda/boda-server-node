@@ -47,17 +47,21 @@ export class OuterCareWorkerController {
     const total = result.body.hits.total.value;
     const data = result.body.hits.hits.map((a) => a._source);
     const filteredData = data.map((a) => {
+      const birthDayOnFormat = a.careWorker.birthDay
+        ? a.careWorker.birthDay.toString().slice(0, 4) +
+          '-' +
+          a.careWorker.birthDay.toString().slice(4, 6) +
+          '-' +
+          a.careWorker.birthDay.toString().slice(6, 8)
+        : 0;
       a.careWorker.name = a.careWorker.name[0] + 'XX';
       a.careWorker.phoneNumber = '010XXXXXXXX';
       a.careWorker.age = a.careWorker.birthDay
-        ? new Date().getFullYear() - new Date(a.careWorker.birthDay).getFullYear() + 1
+        ? new Date().getFullYear() - new Date(birthDayOnFormat).getFullYear() + 1
         : 0;
       a.careWorker.gender = a.careWorker.isFemale ? '여성' : '남성';
       a.careWorker.birthDay = Math.floor(a.careWorker.birthDay / 1000) * 1000 + 101;
-      return {
-        ...a,
-        ...a.careWorker,
-      };
+      return a;
     });
 
     return {
@@ -77,17 +81,22 @@ export class OuterCareWorkerController {
       throw new NotFoundException('id에 해당하는 careWorker가 존재하지 않습니다.');
     }
     const a = result.body.hits.hits[0]._source;
+
+    const birthDayOnFormat = a.careWorker.birthDay
+      ? a.careWorker.birthDay.toString().slice(0, 4) +
+        '-' +
+        a.careWorker.birthDay.toString().slice(4, 6) +
+        '-' +
+        a.careWorker.birthDay.toString().slice(6, 8)
+      : 0;
     a.careWorker.name = a.careWorker.name[0] + 'XX';
     a.careWorker.phoneNumber = '010XXXXXXXX';
     a.careWorker.age = a.careWorker.birthDay
-      ? new Date().getFullYear() - new Date(a.careWorker.birthDay).getFullYear() + 1
+      ? new Date().getFullYear() - new Date(birthDayOnFormat).getFullYear() + 1
       : 0;
     a.careWorker.gender = a.careWorker.isFemale ? '여성' : '남성';
-    a.careWorker.birthDay = Math.floor(a.careWorker.birthDay / 1000) * 1000 + 101;
-    return {
-      ...a,
-      ...a.careWorker,
-    };
+    a.careWorker.birthDay = Math.floor(a.careWorker.birthDay / 10000).toString() + '-XX-XX';
+    return a;
   }
 
   @Post('/compliment')

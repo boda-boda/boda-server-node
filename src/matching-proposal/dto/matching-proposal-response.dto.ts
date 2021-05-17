@@ -13,9 +13,10 @@ export default class MatchingProposalResponse {
       : null;
     this.recipient = m.recipient; // ResponseDto가 없슴
     this.status = m.status;
+    this.hourlyWage = m.hourlyWage;
   }
-
   public id: string;
+  public hourlyWage: number;
   public description: string;
   public status: string;
   public outerCareWorker: OuterCareWorkerResponse;

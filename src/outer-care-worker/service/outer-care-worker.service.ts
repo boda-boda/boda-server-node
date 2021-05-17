@@ -38,7 +38,7 @@ export class OuterCareWorkerService {
   }
 
   public createOuterCareWorker(cwr: CreateOuterCareWorkerRequest) {
-    if (!outerCareWorkerScheduleTypes.includes(cwr.careWorkerSchedule)) {
+    if (!outerCareWorkerScheduleTypes.includes(cwr.careWorker.schedule)) {
       throw new NotAcceptableException('해당 인자는 입력될 수 없습니다.');
     }
 
@@ -47,8 +47,6 @@ export class OuterCareWorkerService {
       careWorkerAreas: cwr.careWorkerAreas,
       careWorkerCapabilities: cwr.careWorkerCapabilities,
       careWorkerCareers: cwr.careWorkerCareers,
-      careWorkerReligions: cwr.careWorkerReligions,
-      careWorkerSchedule: cwr.careWorkerSchedule,
     });
 
     return this.outerCareWorkerRepository.save(ocw);
