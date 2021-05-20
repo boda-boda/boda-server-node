@@ -11,24 +11,24 @@ export class WorkerComplimentEntity extends BaseEntity {
   @Column({
     type: 'varchar',
     length: 100,
-    nullable: false,
+    nullable: true,
   })
   public content: string;
 
   @Column({
     type: 'varchar',
-    nullable: false,
+    nullable: true,
   })
   public careCenterId: string;
 
   @Column({
     type: 'varchar',
-    nullable: false,
+    nullable: true,
   })
   public outerCareWorkerId: string;
 
   @ManyToOne(() => CareCenterEntity, (careCenterEntity) => careCenterEntity.careCenterMetas, {
-    nullable: false,
+    nullable: true,
   })
   @JoinColumn({
     name: 'careCenterId',
@@ -40,7 +40,7 @@ export class WorkerComplimentEntity extends BaseEntity {
     () => OuterCareWorkerEntity,
     (outerCareWorkerEntity) => outerCareWorkerEntity.connectedCenters,
     {
-      nullable: false,
+      nullable: true,
     },
   )
   @JoinColumn({

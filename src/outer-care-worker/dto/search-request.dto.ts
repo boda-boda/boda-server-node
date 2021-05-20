@@ -1,6 +1,6 @@
 import { IsNumberString } from 'class-validator';
 
-export default class cSearchRequest {
+export default class SearchRequest {
   public city?: string;
   public gu?: string;
   public dong?: string;

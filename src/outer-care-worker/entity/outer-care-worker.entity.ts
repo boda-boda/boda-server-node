@@ -2,6 +2,9 @@ import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { BaseEntity } from 'src/common/entity/base';
 import { CenterWorkerJoinTableEntity } from './center-worker-join-table.entity';
 import { MatchingProposalEntity } from 'src/matching-proposal/matching-proposal.entity';
+import { OuterCareWorkerMetaEntity } from 'src/outer-care-worker/entity/outer-care-worker-meta.entity';
+import { OuterCareWorkerAreaEntity } from 'src/outer-care-worker/entity/outer-care-worker-area.entity';
+import { OuterCareWorkerCareerEntity } from 'src/outer-care-worker/entity/outer-care-worker-career.entity';
 
 @Entity('outer-care-worker')
 export class OuterCareWorkerEntity extends BaseEntity {
@@ -64,7 +67,7 @@ export class OuterCareWorkerEntity extends BaseEntity {
   public description: string;
 
   @Column({
-    type: 'text',
+    type: 'date',
     nullable: true,
   })
   public licenseDate: string;
@@ -83,7 +86,7 @@ export class OuterCareWorkerEntity extends BaseEntity {
 
   @Column({
     type: 'text',
-    nullable: false,
+    nullable: true,
   })
   public metadata: string;
 
@@ -92,6 +95,24 @@ export class OuterCareWorkerEntity extends BaseEntity {
     (centerWorkerJointable) => centerWorkerJointable.outerCareWorker,
   )
   public connectedCenters: CenterWorkerJoinTableEntity[];
+
+  @OneToMany(
+    () => OuterCareWorkerMetaEntity,
+    (outerCareWorkerMeta) => outerCareWorkerMeta.outerCareWorker,
+  )
+  public outerCareWorkerMetas: OuterCareWorkerMetaEntity[];
+
+  @OneToMany(
+    () => OuterCareWorkerAreaEntity,
+    (outerCareWorkerArea) => outerCareWorkerArea.outerCareWorker,
+  )
+  public outerCareWorkerAreas: OuterCareWorkerAreaEntity[];
+
+  @OneToMany(
+    () => OuterCareWorkerCareerEntity,
+    (outerCareWorkerCareer) => outerCareWorkerCareer.outerCareWorker,
+  )
+  public outerCareWorkerCareers: OuterCareWorkerCareerEntity[];
 
   @OneToMany(() => MatchingProposalEntity, (matchingProposal) => matchingProposal.outerCareWorker)
   public machingProposals: MatchingProposalEntity[];

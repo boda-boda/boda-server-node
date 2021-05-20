@@ -1,8 +1,9 @@
 import { CareWorkerEntity } from 'src/care-worker/care-worker.entity';
+import { OuterCareWorkerEntity } from 'src/outer-care-worker/entity/outer-care-worker.entity';
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity('care-worker-area')
-export class CareWorkerAreaEntity {
+@Entity('outer-care-worker-area')
+export class OuterCareWorkerAreaEntity {
   @PrimaryGeneratedColumn()
   public id: number;
 
@@ -29,12 +30,16 @@ export class CareWorkerAreaEntity {
   })
   public careWorkerId: string;
 
-  @ManyToOne(() => CareWorkerEntity, (careWorker) => careWorker.careWorkerAreas, {
-    nullable: false,
-  })
+  @ManyToOne(
+    () => OuterCareWorkerEntity,
+    (outerCareWorker) => outerCareWorker.outerCareWorkerAreas,
+    {
+      nullable: false,
+    },
+  )
   @JoinColumn({
     name: 'careWorkerId',
     referencedColumnName: 'id',
   })
-  public careWorker: CareWorkerEntity;
+  public outerCareWorker: OuterCareWorkerEntity;
 }
