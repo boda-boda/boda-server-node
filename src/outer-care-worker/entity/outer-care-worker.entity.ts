@@ -64,7 +64,7 @@ export class OuterCareWorkerEntity extends BaseEntity {
 
   @Column({
     type: 'text',
-    nullable: false,
+    nullable: true,
   })
   public metadata: string;
 
