@@ -1,7 +1,7 @@
 import { Type } from 'class-transformer';
 import { IsNotEmpty, IsString, ValidateNested } from 'class-validator';
 
-class CareWorkerRequest {
+class OuterCareWorkerRequest {
   @IsNotEmpty()
   public name: string;
 
@@ -20,19 +20,23 @@ class CareWorkerRequest {
   public detailAddress: string;
 
   public description: string;
+
+  public licenseDate: string;
+
+  public schedule: string;
+
+  public religion: string;
 }
 
-class CareWorkerCareerRequest {
-  public place: string;
+class OuterCareWorkerCareerRequest {
+  public workplace: string;
 
-  public customer: string;
+  public recipient: string;
 
   public duration: string;
-
-  public memo: string;
 }
 
-class CareWorkerAreaRequest {
+class OuterCareWorkerAreaRequest {
   public city: string;
 
   public gu: string;
@@ -44,24 +48,18 @@ export class CreateOuterCareWorkerRequest {
   public id: string;
 
   @ValidateNested({ each: true })
-  @Type(() => CareWorkerRequest)
+  @Type(() => OuterCareWorkerRequest)
   @IsNotEmpty()
-  public careWorker: CareWorkerRequest;
+  public outerCareWorker: OuterCareWorkerRequest;
 
   @IsString({ each: true })
-  public careWorkerCapabilities: string[];
-
-  @IsString({ each: true })
-  public careWorkerReligions: string[];
-
-  @IsString()
-  public careWorkerSchedule: string;
+  public outerCareWorkerCapabilities: string[];
 
   @ValidateNested({ each: true })
-  @Type(() => CareWorkerCareerRequest)
-  public careWorkerCareers: CareWorkerCareerRequest[];
+  @Type(() => OuterCareWorkerCareerRequest)
+  public outerCareWorkerCareers: OuterCareWorkerCareerRequest[];
 
   @ValidateNested({ each: true })
-  @Type(() => CareWorkerAreaRequest)
-  public careWorkerAreas: CareWorkerAreaRequest[];
+  @Type(() => OuterCareWorkerAreaRequest)
+  public outerCareWorkerAreas: OuterCareWorkerAreaRequest[];
 }

@@ -21,7 +21,7 @@ export class SearchService {
     cwr.id = id;
 
     return this.elasticSearchClient.index({
-      index: 'care-worker',
+      index: 'outer-care-worker',
       body: cwr,
     });
   }
@@ -30,7 +30,7 @@ export class SearchService {
     const filter = this.createFilter(searchRequest);
 
     return this.elasticSearchClient.search({
-      index: 'care-worker',
+      index: 'outer-care-worker',
       body: {
         from: searchRequest.from,
         size: searchRequest.size,
@@ -45,7 +45,7 @@ export class SearchService {
 
   public searchOuterCareWorkerById(id: string) {
     return this.elasticSearchClient.search({
-      index: 'care-worker',
+      index: 'outer-care-worker',
       body: {
         query: {
           term: {
@@ -62,7 +62,7 @@ export class SearchService {
     if (searchRequest.schedule) {
       filter.push({
         terms: {
-          'careWorkerSchedule.keyword': ['', searchRequest.schedule],
+          'outerCareWorker.schedule.keyword': ['', searchRequest.schedule],
         },
       });
     }
@@ -70,7 +70,7 @@ export class SearchService {
     if (searchRequest.city) {
       filter.push({
         terms: {
-          'careWorkerAreas.city.keyword': ['', searchRequest.city],
+          'outerCareWorkerAreas.city.keyword': ['', searchRequest.city],
         },
       });
     }
@@ -78,7 +78,7 @@ export class SearchService {
     if (searchRequest.gu) {
       filter.push({
         terms: {
-          'careWorkerAreas.gu.keyword': ['', searchRequest.gu],
+          'outerCareWorkerAreas.gu.keyword': ['', searchRequest.gu],
         },
       });
     }
@@ -86,7 +86,7 @@ export class SearchService {
     if (searchRequest.dong) {
       filter.push({
         terms: {
-          'careWorkerAreas.dong.keyword': ['', searchRequest.dong],
+          'outerCareWorkerAreas.dong.keyword': ['', searchRequest.dong],
         },
       });
     }
@@ -95,7 +95,7 @@ export class SearchService {
       searchRequest.capabilities.forEach((capa) =>
         filter.push({
           term: {
-            'careWorkerCapabilities.keyword': capa,
+            'outerCareWorkerCapabilities.keyword': capa,
           },
         }),
       );
@@ -105,7 +105,7 @@ export class SearchService {
       searchRequest.religions.forEach((relig) =>
         filter.push({
           term: {
-            'careWorkerReligions.keyword': relig,
+            'outerCareWorker.religion.keyword': relig,
           },
         }),
       );

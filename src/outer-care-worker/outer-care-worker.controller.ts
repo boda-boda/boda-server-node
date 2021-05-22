@@ -20,6 +20,7 @@ import { SearchService } from 'src/search/search.service';
 import { getConnection } from 'typeorm';
 import CreateComplimentRequest from './dto/create-compliment-request.dto';
 import { CreateOuterCareWorkerRequest } from './dto/create-outer-care-worker-request';
+import OuterCareWorkerResponse from './dto/outer-care-worker-response.dto';
 import SearchRequest from './dto/search-request.dto';
 import { OuterCareWorkerService } from './service/outer-care-worker.service';
 
@@ -47,16 +48,23 @@ export class OuterCareWorkerController {
     const total = result.body.hits.total.value;
     const data = result.body.hits.hits.map((a) => a._source);
     const filteredData = data.map((a) => {
-      a.careWorker.name = a.careWorker.name[0] + 'XX';
-      a.careWorker.phoneNumber = '010XXXXXXXX';
-      a.careWorker.age = a.careWorker.birthDay
-        ? new Date().getFullYear() - new Date(a.careWorker.birthDay).getFullYear() + 1
+      const birthDayOnFormat = a.outerCareWorker.birthDay
+        ? a.outerCareWorker.birthDay.toString().slice(0, 4) +
+          '-' +
+          a.outerCareWorker.birthDay.toString().slice(4, 6) +
+          '-' +
+          a.outerCareWorker.birthDay.toString().slice(6, 8)
         : 0;
-      a.careWorker.gender = a.careWorker.isFemale ? '여성' : '남성';
-      a.careWorker.birthDay = Math.floor(a.careWorker.birthDay / 1000) * 1000 + 101;
+      a.outerCareWorker.name = a.outerCareWorker.name[0] + 'XX';
+      a.outerCareWorker.phoneNumber = '010XXXXXXXX';
+      a.outerCareWorker.age = a.outerCareWorker.birthDay
+        ? new Date().getFullYear() - new Date(birthDayOnFormat).getFullYear() + 1
+        : 0;
+      a.outerCareWorker.gender = a.outerCareWorker.isFemale ? '여성' : '남성';
+      a.outerCareWorker.birthDay = Math.floor(a.outerCareWorker.birthDay / 1000) * 1000 + 101;
       return {
         ...a,
-        ...a.careWorker,
+        ...a.outerCareWorker,
       };
     });
 
@@ -71,23 +79,8 @@ export class OuterCareWorkerController {
   @Get('/:id')
   @UseGuards(OnlyCareCenterGuard)
   public async getOuterCareWorkerById(@Param('id') id: string) {
-    const result = await this.searchService.searchOuterCareWorkerById(id);
-
-    if (result.body.hits.total.value === 0) {
-      throw new NotFoundException('id에 해당하는 careWorker가 존재하지 않습니다.');
-    }
-    const a = result.body.hits.hits[0]._source;
-    a.careWorker.name = a.careWorker.name[0] + 'XX';
-    a.careWorker.phoneNumber = '010XXXXXXXX';
-    a.careWorker.age = a.careWorker.birthDay
-      ? new Date().getFullYear() - new Date(a.careWorker.birthDay).getFullYear() + 1
-      : 0;
-    a.careWorker.gender = a.careWorker.isFemale ? '여성' : '남성';
-    a.careWorker.birthDay = Math.floor(a.careWorker.birthDay / 1000) * 1000 + 101;
-    return {
-      ...a,
-      ...a.careWorker,
-    };
+    const outerCareWorker = await this.outerCareWorkerService.getOuterCareWorkerById(id);
+    return new OuterCareWorkerResponse(outerCareWorker);
   }
 
   @Post('/compliment')

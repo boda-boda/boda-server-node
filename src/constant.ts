@@ -31,4 +31,6 @@ export const weekDaysKor = ['월', '화', '수', '목', '금', '토', '일'];
 
 export const outerCareWorkerScheduleTypes = ['오전', '오후', '종일', ''];
 
-export type MatchingProposalStatus = 'NOT_READ' | 'READ' | 'ACCEPTED' | 'DECLINED';
+export type MatchingProposalStatus = 'AWAITING' | 'ACCEPTED' | 'DECLINED';
+
+export const MATCHING_PROPOSAL_STATUS = ['AWAITING', 'ACCEPTED', 'DECLINED'];

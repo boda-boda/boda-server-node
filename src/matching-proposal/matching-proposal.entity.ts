@@ -12,7 +12,7 @@ export class MatchingProposalEntity extends BaseEntity {
 
   @Column({
     type: 'int',
-    nullable: false,
+    nullable: true,
   })
   public hourlyWage: number;
 
@@ -25,8 +25,8 @@ export class MatchingProposalEntity extends BaseEntity {
   @Column({
     type: 'varchar',
     length: 100,
-    nullable: true,
-    default: 'NOT_READ',
+    nullable: false,
+    default: 'AWAITING',
   })
   public status: MatchingProposalStatus; // TODO: 좋은 방법이 없을까요
 
