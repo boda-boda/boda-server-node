@@ -9,9 +9,9 @@ export default class OuterCareWorkerResponse {
     this.name = o.name ? o.name[0] + 'XX' : '';
     this.gender = o.isFemale ? '여성' : '남성';
     this.profile = o.profile;
-    this.age = o.birthDay ? new Date().getFullYear() - new Date(o.birthDay).getFullYear() + 1 : 0;
-    this.birthDay = new Date(o.birthDay).getFullYear() + '-XX-XX';
+
     this.description = o.description;
+    this.licenseDate = o.licenseDate;
     this.schedule = o.schedule;
     this.phoneNumber = '010XXXXXXXX';
     this.religion = o.religion;
@@ -30,7 +30,8 @@ export default class OuterCareWorkerResponse {
           (careWorkerCareer) => new OuterCareWorkerCareerResponse(careWorkerCareer),
         )
       : [];
-    this.licenseDate = o.licenseDate;
+    this.age = o.birthDay ? new Date().getFullYear() - new Date(o.birthDay).getFullYear() + 1 : 0;
+    this.birthDay = new Date(o.birthDay).getFullYear() + '-XX-XX';
   }
 
   public id: string;
