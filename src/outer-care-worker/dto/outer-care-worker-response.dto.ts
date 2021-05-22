@@ -11,7 +11,6 @@ export default class OuterCareWorkerResponse {
     this.profile = o.profile;
     this.age = o.birthDay ? new Date().getFullYear() - new Date(o.birthDay).getFullYear() + 1 : 0;
     this.birthDay = new Date(o.birthDay).getFullYear() + '-XX-XX';
-    this.address = o.address;
     this.description = o.description;
     this.schedule = o.schedule;
     this.phoneNumber = '010XXXXXXXX';
@@ -32,8 +31,6 @@ export default class OuterCareWorkerResponse {
         )
       : [];
     this.licenseDate = o.licenseDate;
-
-    this.metadata = JSON.parse(o.metadata);
   }
 
   public id: string;
@@ -42,12 +39,10 @@ export default class OuterCareWorkerResponse {
   public profile: string;
   public age: number;
   public birthDay: string;
-  public address: string;
   public description: string;
   public schedule: string;
   public phoneNumber: string;
   public licenseDate: string;
-  public metadata: string;
   public religion: string;
   public outerCareWorkerMetas: OuterCareWorkerMetaResponse[];
   public outerCareWorkerAreas: OuterCareWorkerAreaResponse[];

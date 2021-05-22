@@ -84,12 +84,6 @@ export class OuterCareWorkerEntity extends BaseEntity {
   })
   public religion: string;
 
-  @Column({
-    type: 'text',
-    nullable: true,
-  })
-  public metadata: string;
-
   @OneToMany(
     () => CenterWorkerJoinTableEntity,
     (centerWorkerJointable) => centerWorkerJointable.outerCareWorker,
