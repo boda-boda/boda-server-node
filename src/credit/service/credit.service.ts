@@ -1,7 +1,5 @@
 import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { stringList } from 'aws-sdk/clients/datapipeline';
-import { FREE_CREDIT_TYPE, PAID_CREDIT_TYPE } from 'src/constant';
 import { Repository } from 'typeorm';
 import { CreditHistoryEntity } from '../entity/credit-history.entity';
 import { CreditEntity } from '../entity/credit.entity';
