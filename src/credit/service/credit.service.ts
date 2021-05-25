@@ -1,8 +1,18 @@
-import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreditHistoryEntity } from '../entity/credit-history.entity';
 import { CreditEntity } from '../entity/credit.entity';
+import UseCreditRequest from '../dto/use-credit-request.dto';
+import PaidCreditRequest from '../dto/paid-credit-request.dto';
+import FreeCreditRequest from '../dto/free-credit-request.dto';
+import moment from 'moment';
+import { NumberAttributeConstraintsType } from 'aws-sdk/clients/cognitoidentityserviceprovider';
 
 @Injectable()
 export class CreditService {
@@ -13,7 +23,71 @@ export class CreditService {
     public readonly creditHistoryRepository: Repository<CreditHistoryEntity>,
   ) {}
 
-  public async updateCredit(credit: Partial<CreditEntity>, careCenterId: string) {
+  public async getPaidCredit(credit: PaidCreditRequest, careCenterId: string) {
+    const targetCredit = await this.creditRepository.findOne({
+      where: {
+        careCenterId,
+      },
+    });
+
+    if (targetCredit.careCenterId !== careCenterId) {
+      throw new UnauthorizedException('권한이 없습니다.');
+    }
+    const updatedCreditRequest = {
+      careCenterId: careCenterId,
+      paidCredit: targetCredit.paidCredit + credit.paidCredit,
+    };
+
+    const updatedTargetCredit = this.creditRepository.merge(targetCredit, updatedCreditRequest);
+    await this.creditRepository.save(updatedTargetCredit);
+
+    const creditHistoryRequest = {
+      content: `돌봄 포인트 ${credit.paidCredit}개`,
+      credits: credit.paidCredit,
+      type: '충전',
+      date: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString(),
+      creditId: updatedTargetCredit.id,
+    };
+
+    const creditHistory = this.creditHistoryRepository.create(creditHistoryRequest);
+    await this.creditHistoryRepository.save(creditHistory);
+
+    return updatedTargetCredit;
+  }
+
+  public async getFreeCredit(credit: FreeCreditRequest, careCenterId: string) {
+    const targetCredit = await this.creditRepository.findOne({
+      where: {
+        careCenterId,
+      },
+    });
+
+    if (targetCredit.careCenterId !== careCenterId) {
+      throw new UnauthorizedException('권한이 없습니다.');
+    }
+    const updatedCreditRequest = {
+      careCenterId: careCenterId,
+      freeCredit: targetCredit.freeCredit + credit.freeCredit,
+    };
+
+    const updatedTargetCredit = this.creditRepository.merge(targetCredit, updatedCreditRequest);
+    await this.creditRepository.save(updatedTargetCredit);
+
+    const creditHistoryRequest = {
+      content: `돌봄 포인트 ${credit.freeCredit}개 (${credit.content})`,
+      credits: credit.freeCredit,
+      type: '지급',
+      date: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString(),
+      creditId: updatedTargetCredit.id,
+    };
+
+    const creditHistory = this.creditHistoryRepository.create(creditHistoryRequest);
+    await this.creditHistoryRepository.save(creditHistory);
+
+    return updatedTargetCredit;
+  }
+
+  public async useCredit(credit: UseCreditRequest, careCenterId: string) {
     const targetCredit = await this.creditRepository.findOne({
       where: {
         careCenterId,
@@ -24,22 +98,40 @@ export class CreditService {
       throw new UnauthorizedException('권한이 없습니다.');
     }
 
-    const updatedCreditRequest = {
-      ...credit,
-      paidCredit: targetCredit.paidCredit + credit.paidCredit,
-      freeCredit: targetCredit.freeCredit + credit.freeCredit,
-    };
+    let updatedCreditRequest;
+    if (targetCredit.freeCredit - credit.usedCredit >= 0) {
+      updatedCreditRequest = {
+        ...credit,
+        freeCredit: targetCredit.freeCredit - credit.usedCredit,
+      };
+    } else if (targetCredit.paidCredit + targetCredit.freeCredit - credit.usedCredit >= 0) {
+      updatedCreditRequest = {
+        ...credit,
+        freeCredit: 0,
+        paidCredit: targetCredit.paidCredit + targetCredit.freeCredit - credit.usedCredit,
+      };
+    } else throw new BadRequestException('Not Enough Credit');
 
     const updatedTargetCredit = this.creditRepository.merge(targetCredit, updatedCreditRequest);
     await this.creditRepository.save(updatedTargetCredit);
 
+    const creditHistoryRequest = {
+      content: `${credit.careWorkerName} 요양보호사님 전환`,
+      credits: -1 * credit.usedCredit,
+      type: '사용',
+      date: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString(),
+      creditId: updatedTargetCredit.id,
+    };
+
+    const creditHistory = this.creditHistoryRepository.create(creditHistoryRequest);
+    await this.creditHistoryRepository.save(creditHistory);
+
     return updatedTargetCredit;
   }
 
-  public getCreditById(id: string, careCenterId: string) {
+  public getCreditByCareCenterId(careCenterId: string) {
     return this.creditRepository.findOne({
       where: {
-        id,
         careCenterId,
       },
     });
@@ -62,5 +154,13 @@ export class CreditService {
     const Credit = this.creditRepository.create(updatedRequest);
     await this.creditRepository.save(Credit);
     return Credit;
+  }
+
+  public getCreditHistoryByCareCenterId(creditId: number) {
+    return this.creditHistoryRepository.find({
+      where: {
+        creditId,
+      },
+    });
   }
 }

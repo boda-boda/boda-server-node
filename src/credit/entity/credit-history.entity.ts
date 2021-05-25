@@ -36,7 +36,7 @@ export class CreditHistoryEntity extends BaseEntity {
     type: 'varchar',
     nullable: false,
   })
-  public creditId: string;
+  public creditId: number;
 
   @ManyToOne(() => CreditEntity, (creditEntity) => creditEntity.creditHistorys, {
     nullable: false,
