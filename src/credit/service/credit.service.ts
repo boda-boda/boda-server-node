@@ -21,7 +21,7 @@ export class CreditService {
     public readonly creditHistoryRepository: Repository<CreditHistoryEntity>,
   ) {}
 
-  public async getPaidCredit(credit: PaidCreditRequest, careCenterId: string) {
+  public async increasePaidCredit(credit: PaidCreditRequest, careCenterId: string) {
     const targetCredit = await this.creditRepository.findOne({
       where: {
         careCenterId,
@@ -53,7 +53,7 @@ export class CreditService {
     return updatedTargetCredit;
   }
 
-  public async getFreeCredit(credit: FreeCreditRequest, careCenterId: string) {
+  public async increaseFreeCredit(credit: FreeCreditRequest, careCenterId: string) {
     const targetCredit = await this.creditRepository.findOne({
       where: {
         careCenterId,

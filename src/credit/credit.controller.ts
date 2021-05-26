@@ -26,7 +26,7 @@ export class CreditController {
 
   @Put('/paid-charge')
   @UseGuards(OnlyAdminGuard)
-  public async getPaidCredit(
+  public async increasePaidCredit(
     @Req() request: Request,
     @Body() paidCreditRequest: PaidCreditRequest,
   ) {
@@ -38,7 +38,10 @@ export class CreditController {
     await queryRunner.startTransaction();
 
     try {
-      await this.creditService.getPaidCredit(paidCreditRequest, paidCreditRequest.careCenterId);
+      await this.creditService.increasePaidCredit(
+        paidCreditRequest,
+        paidCreditRequest.careCenterId,
+      );
       await queryRunner.commitTransaction();
     } catch (e) {
       await queryRunner.rollbackTransaction();
@@ -54,7 +57,7 @@ export class CreditController {
 
   @Put('/free-charge')
   @UseGuards(OnlyAdminGuard)
-  public async getFreeCredit(
+  public async increaseFreeCredit(
     @Req() request: Request,
     @Body() freeCreditRequest: FreeCreditRequest,
   ) {
@@ -66,7 +69,10 @@ export class CreditController {
     await queryRunner.startTransaction();
 
     try {
-      await this.creditService.getFreeCredit(freeCreditRequest, freeCreditRequest.careCenterId);
+      await this.creditService.increaseFreeCredit(
+        freeCreditRequest,
+        freeCreditRequest.careCenterId,
+      );
       await queryRunner.commitTransaction();
     } catch (e) {
       await queryRunner.rollbackTransaction();
