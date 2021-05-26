@@ -11,8 +11,6 @@ import { CreditEntity } from '../entity/credit.entity';
 import UseCreditRequest from '../dto/use-credit-request.dto';
 import PaidCreditRequest from '../dto/paid-credit-request.dto';
 import FreeCreditRequest from '../dto/free-credit-request.dto';
-import moment from 'moment';
-import { NumberAttributeConstraintsType } from 'aws-sdk/clients/cognitoidentityserviceprovider';
 
 @Injectable()
 export class CreditService {
@@ -156,7 +154,7 @@ export class CreditService {
     return Credit;
   }
 
-  public getCreditHistoryByCareCenterId(creditId: number) {
+  public getCreditHistoryByCreditId(creditId: number) {
     return this.creditHistoryRepository.find({
       where: {
         creditId,

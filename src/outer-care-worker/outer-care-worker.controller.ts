@@ -18,8 +18,10 @@ import { OnlyCareCenterGuard } from 'src/common/guard/only-care-center.guard';
 import { SentryInterceptor } from 'src/common/interceptor/sentry.interceptor';
 import { SearchService } from 'src/search/search.service';
 import { getConnection } from 'typeorm';
+import CenterWorkerJoinRequest from './dto/center-worker-join-request.dto';
 import CreateComplimentRequest from './dto/create-compliment-request.dto';
 import { CreateOuterCareWorkerRequest } from './dto/create-outer-care-worker-request';
+import { OuterCareWorkerConversionResponse } from './dto/outer-care-worker-conversion-response.dto';
 import OuterCareWorkerResponse from './dto/outer-care-worker-response.dto';
 import SearchRequest from './dto/search-request.dto';
 import { OuterCareWorkerService } from './service/outer-care-worker.service';
@@ -83,6 +85,13 @@ export class OuterCareWorkerController {
     return new OuterCareWorkerResponse(outerCareWorker);
   }
 
+  @Get('/conversion/:id')
+  @UseGuards(OnlyCareCenterGuard)
+  public async getOuterCareWorkerForConversionById(@Param('id') id: string) {
+    const outerCareWorker = await this.outerCareWorkerService.getOuterCareWorkerById(id);
+    return new OuterCareWorkerConversionResponse(outerCareWorker);
+  }
+
   @Post('/compliment')
   @UseGuards(OnlyCareCenterGuard)
   public async createCareWorkerCompliment(
@@ -125,5 +134,41 @@ export class OuterCareWorkerController {
       throw e;
     }
     await queryRunner.release();
+  }
+
+  @Post('/conversion')
+  @UseGuards(OnlyCareCenterGuard)
+  public async createCenterWorkerJoin(
+    @Req() request: Request,
+    @Body() body: { outerCareWorkerId: string },
+  ) {
+    const queryRunner = getConnection().createQueryRunner();
+    await queryRunner.startTransaction();
+
+    try {
+      await this.outerCareWorkerService.createCenterWorkerJoin(
+        body.outerCareWorkerId,
+        request.careCenter.id,
+      );
+    } catch (e) {
+      await queryRunner.rollbackTransaction();
+      await queryRunner.release();
+      throw e;
+    }
+    await queryRunner.release();
+  }
+
+  @Get('/id/converted')
+  @UseGuards(OnlyCareCenterGuard)
+  public async getConvertedOuterCareWorkersIds(@Req() request: Request) {
+    const convertedOuterCareWorkers =
+      await this.outerCareWorkerService.getConvertedOuterCareWorkersByCareCenterId(
+        request.careCenter.id,
+      );
+    const convertedOuterCareWorkersIdArray = convertedOuterCareWorkers.reduce((acc, cur) => {
+      acc.push(cur.outerCareWorkerId);
+      return acc;
+    }, []);
+    return convertedOuterCareWorkersIdArray;
   }
 }

@@ -77,10 +77,6 @@ export class CreateCareWorkerRequest {
   public careWorkerReligions: string[];
 
   @ValidateNested({ each: true })
-  @Type(() => CareWorkerScheduleRequest)
-  public careWorkerSchedules: CareWorkerScheduleRequest[];
-
-  @ValidateNested({ each: true })
   @Type(() => CareWorkerCareerRequest)
   public careWorkerCareers: CareWorkerCareerRequest[];
 

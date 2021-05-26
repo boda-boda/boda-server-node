@@ -91,7 +91,7 @@ export class CreditController {
     await queryRunner.startTransaction();
 
     try {
-      await this.creditService.useCredit(useCreditRequest, useCreditRequest.careCenterId);
+      await this.creditService.useCredit(useCreditRequest, request.careCenter.id);
       await queryRunner.commitTransaction();
     } catch (e) {
       await queryRunner.rollbackTransaction();
@@ -99,7 +99,7 @@ export class CreditController {
       throw e;
     }
     await queryRunner.release();
-    const credit = await this.creditService.getCreditByCareCenterId(useCreditRequest.careCenterId);
+    const credit = await this.creditService.getCreditByCareCenterId(request.careCenter.id);
 
     return credit;
   }
@@ -140,7 +140,7 @@ export class CreditController {
     let result;
     try {
       const credit = await this.creditService.getCreditByCareCenterId(request.careCenter.id);
-      result = await this.creditService.getCreditHistoryByCareCenterId(credit.id);
+      result = await this.creditService.getCreditHistoryByCreditId(credit.id);
       await queryRunner.commitTransaction();
     } catch (e) {
       await queryRunner.rollbackTransaction();
@@ -148,6 +148,6 @@ export class CreditController {
       throw e;
     }
 
-    return result;
+    return result.reverse();
   }
 }

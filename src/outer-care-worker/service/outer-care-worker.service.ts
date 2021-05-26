@@ -4,6 +4,7 @@ import { CAPABILITY, outerCareWorkerScheduleTypes, RELIGION } from 'src/constant
 import { OuterCareWorkerCareerEntity } from 'src/outer-care-worker/entity/outer-care-worker-career.entity';
 import { OuterCareWorkerMetaEntity } from 'src/outer-care-worker/entity/outer-care-worker-meta.entity';
 import { Repository } from 'typeorm';
+import CenterWorkerJoinRequest from '../dto/center-worker-join-request.dto';
 import { CreateOuterCareWorkerRequest } from '../dto/create-outer-care-worker-request';
 import { CenterWorkerJoinTableEntity } from '../entity/center-worker-join-table.entity';
 import { OuterCareWorkerAreaEntity } from '../entity/outer-care-worker-area.entity';
@@ -267,12 +268,32 @@ export class OuterCareWorkerService {
     return targetOuterCareWorker;
   }
 
+  public async createCenterWorkerJoin(ocwid: string, ccid: string) {
+    const createCenterWorkerJoinRequest = {
+      outerCareWorkerId: ocwid,
+      careCenterId: ccid,
+    } as CenterWorkerJoinRequest;
+    const centerWorkerJoin = this.centerWorkerJoinTableRepository.create(
+      createCenterWorkerJoinRequest,
+    );
+    await this.centerWorkerJoinTableRepository.save(centerWorkerJoin);
+    return centerWorkerJoin;
+  }
+
   public getOuterCareWorkerById(id: string) {
     return this.outerCareWorkerRepository.findOne({
       relations: ['outerCareWorkerMetas', 'outerCareWorkerAreas', 'outerCareWorkerCareers'],
       where: {
         id,
         isDeleted: false,
+      },
+    });
+  }
+
+  public getConvertedOuterCareWorkersByCareCenterId(ccid: string) {
+    return this.centerWorkerJoinTableRepository.find({
+      where: {
+        careCenterId: ccid,
       },
     });
   }

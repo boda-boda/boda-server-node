@@ -66,11 +66,6 @@ export class CareWorkerService {
       targetWorker.id,
     );
 
-    await this.careWorkerScheduleService.createCareWorkerSchedule(
-      careWorkerRequest.careWorkerSchedules,
-      targetWorker.id,
-    );
-
     await this.careWorkerCareerService.createCareWorkerCareer(
       careWorkerRequest.careWorkerCareers,
       targetWorker.id,
@@ -110,11 +105,6 @@ export class CareWorkerService {
 
     await this.careWorkerMetaService.updateCareWorkerMeta(
       [...capabilityMeta, ...religionMeta],
-      targetWorker.id,
-    );
-
-    await this.careWorkerScheduleService.updateCareWorkerSchedule(
-      careWorkerRequest.careWorkerSchedules,
       targetWorker.id,
     );
 
