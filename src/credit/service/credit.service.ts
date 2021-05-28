@@ -99,12 +99,12 @@ export class CreditService {
     let updatedCreditRequest;
     if (targetCredit.freeCredit - credit.usedCredit >= 0) {
       updatedCreditRequest = {
-        ...credit,
+        ...targetCredit,
         freeCredit: targetCredit.freeCredit - credit.usedCredit,
       };
     } else if (targetCredit.paidCredit + targetCredit.freeCredit - credit.usedCredit >= 0) {
       updatedCreditRequest = {
-        ...credit,
+        ...targetCredit,
         freeCredit: 0,
         paidCredit: targetCredit.paidCredit + targetCredit.freeCredit - credit.usedCredit,
       };

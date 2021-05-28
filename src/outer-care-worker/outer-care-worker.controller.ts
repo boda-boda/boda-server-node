@@ -3,7 +3,6 @@ import {
   Body,
   Controller,
   Get,
-  NotFoundException,
   Param,
   Post,
   Query,
@@ -18,13 +17,14 @@ import { OnlyCareCenterGuard } from 'src/common/guard/only-care-center.guard';
 import { SentryInterceptor } from 'src/common/interceptor/sentry.interceptor';
 import { SearchService } from 'src/search/search.service';
 import { getConnection } from 'typeorm';
-import CenterWorkerJoinRequest from './dto/center-worker-join-request.dto';
+import ConvertOuterCareWorkerRequest from './dto/convert-outer-care-worker-request.dto';
 import CreateComplimentRequest from './dto/create-compliment-request.dto';
 import { CreateOuterCareWorkerRequest } from './dto/create-outer-care-worker-request';
 import { OuterCareWorkerConversionResponse } from './dto/outer-care-worker-conversion-response.dto';
 import OuterCareWorkerResponse from './dto/outer-care-worker-response.dto';
 import SearchRequest from './dto/search-request.dto';
 import { OuterCareWorkerService } from './service/outer-care-worker.service';
+import { CREDITS_ON_CONVERSION } from 'src/constant';
 
 @Controller('outer-care-worker')
 @UseInterceptors(SentryInterceptor)
@@ -156,6 +156,62 @@ export class OuterCareWorkerController {
       throw e;
     }
     await queryRunner.release();
+  }
+
+  // @Post('/convert')
+  // @UseGuards(OnlyCareCenterGuard)
+  // public async convertOuterCareWorker(
+  //   @Req() request: Request,
+  //   @Body() convertOuterCareWorkerRequest: ConvertOuterCareWorkerRequest,
+  // ) {
+  //   const queryRunner = getConnection().createQueryRunner();
+  //   await queryRunner.startTransaction();
+
+  //   try {
+  //     this.outerCareWorkerService.createCenterWorkerJoin(
+  //       convertOuterCareWorkerRequest.outerCareWorkerId,
+  //       request.careCenter.id,
+  //     );
+  //     const outerCareWorker = await this.outerCareWorkerService.getOuterCareWorkerById(
+  //       convertOuterCareWorkerRequest.outerCareWorkerId,
+  //     );
+
+  //     const outerCareWorkerOnFormat = new OuterCareWorkerConversionResponse(outerCareWorker);
+
+  //     const useCreditRequest = {
+  //       usedCredit: convertOuterCareWorkerRequest.usedCredit,
+  //       careWorkerName: outerCareWorker.name,
+  //     };
+
+  //     this.creditService.useCredit(useCreditRequest, request.careCenter.id);
+  //     const createWorkerRequest = {
+  //       careWorker: outerCareWorkerOnFormat.careWorker,
+  //       careWorkerAreas: outerCareWorkerOnFormat.careWorkerAreas,
+  //       careWorkerCapabilities: outerCareWorkerOnFormat.careWorkerCapabilities,
+  //       careWorkerCareers: outerCareWorkerOnFormat.careWorkerCareers,
+  //       careWorkerReligions: outerCareWorkerOnFormat.careWorkerReligions,
+  //     } as CreateCareWorkerRequest;
+  //     this.careWorkerService.createCareWorker(request.careCenter.id, createWorkerRequest);
+  //     await queryRunner.commitTransaction();
+  //   } catch (e) {
+  //     await queryRunner.rollbackTransaction();
+  //     throw e;
+  //   } finally {
+  //     await queryRunner.release();
+  //   }
+  // }
+
+  @Post('/convert')
+  @UseGuards(OnlyCareCenterGuard)
+  public async convertOuterCareWorker2(
+    @Req() request: Request,
+    @Body() convertOuterCareWorkerRequest: ConvertOuterCareWorkerRequest,
+  ) {
+    return await this.outerCareWorkerService.convertOuterCareWorker(
+      convertOuterCareWorkerRequest.outerCareWorkerId,
+      request.careCenter.id,
+      CREDITS_ON_CONVERSION,
+    );
   }
 
   @Get('/id/converted')

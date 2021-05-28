@@ -9,6 +9,17 @@ import { OuterCareWorkerController } from './outer-care-worker.controller';
 import { OuterCareWorkerService } from './service/outer-care-worker.service';
 import { OuterCareWorkerCareerEntity } from 'src/outer-care-worker/entity/outer-care-worker-career.entity';
 import { OuterCareWorkerMetaEntity } from 'src/outer-care-worker/entity/outer-care-worker-meta.entity';
+import { CreditModule } from 'src/credit/credit.module';
+import { CareWorkerModule } from 'src/care-worker/care-worker.module';
+import { CreditEntity } from 'src/credit/entity/credit.entity';
+import { CreditHistoryEntity } from 'src/credit/entity/credit-history.entity';
+import { CareWorkerEntity } from 'src/care-worker/care-worker.entity';
+import { CareWorkerMetaModule } from 'src/care-worker-meta/care-worker-meta.module';
+import { CareWorkerAreaModule } from 'src/care-worker-area/care-worker-area.module';
+import { CareWorkerCareerModule } from 'src/care-worker-career/care-worker-career.module';
+import { CareWorkerMetaEntity } from 'src/care-worker-meta/care-worker-meta.entity';
+import { CareWorkerCareerEntity } from 'src/care-worker-career/care-worker-career.entity';
+import { CareWorkerAreaEntity } from 'src/care-worker-area/care-worker-area.entity';
 
 @Module({
   imports: [
@@ -20,6 +31,12 @@ import { OuterCareWorkerMetaEntity } from 'src/outer-care-worker/entity/outer-ca
       OuterCareWorkerEntity,
       WorkerComplimentEntity,
       CenterWorkerJoinTableEntity,
+      CreditEntity,
+      CreditHistoryEntity,
+      CareWorkerEntity,
+      CareWorkerMetaEntity,
+      CareWorkerCareerEntity,
+      CareWorkerAreaEntity,
     ]),
   ],
   controllers: [OuterCareWorkerController],

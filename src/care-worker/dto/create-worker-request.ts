@@ -29,7 +29,7 @@ class CareWorkerRequest {
 }
 
 class CareWorkerCareerRequest {
-  public place: string;
+  public workplace: string;
 
   public customer: string;
 

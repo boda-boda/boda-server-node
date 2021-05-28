@@ -43,7 +43,7 @@ export class CareWorkerMetaService {
   }
 
   public async createReligionMeta(religions: string[], careWorkerId: string) {
-    const religionMetaEntity = religions.map((a) =>
+    const religionMetaEntity = religions?.map((a) =>
       this.careWorkerMetaRepository.create({
         type: RELIGION,
         key: a,
