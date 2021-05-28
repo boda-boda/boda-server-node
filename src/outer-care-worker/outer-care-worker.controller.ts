@@ -203,7 +203,7 @@ export class OuterCareWorkerController {
 
   @Post('/convert')
   @UseGuards(OnlyCareCenterGuard)
-  public async convertOuterCareWorker2(
+  public async convertOuterCareWorker(
     @Req() request: Request,
     @Body() convertOuterCareWorkerRequest: ConvertOuterCareWorkerRequest,
   ) {
