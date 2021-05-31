@@ -6,6 +6,7 @@ import SearchRequest from 'src/outer-care-worker/dto/search-request.dto';
 @Injectable()
 export class SearchService {
   private elasticSearchClient: ElasticSearchClient;
+  private outerCareWorkerIndex: string;
 
   public constructor() {
     this.elasticSearchClient = new ElasticSearchClient({
@@ -15,13 +16,14 @@ export class SearchService {
         password: process.env.ELASTIC_PASSWORD,
       },
     });
+    this.outerCareWorkerIndex = process.env.ELASTIC_CARE_WORKER_INDEX;
   }
 
   public createOuterCareWorker(cwr: CreateOuterCareWorkerRequest, id: string) {
     cwr.id = id;
 
     return this.elasticSearchClient.index({
-      index: 'outer-care-worker',
+      index: this.outerCareWorkerIndex,
       body: cwr,
     });
   }
@@ -30,7 +32,7 @@ export class SearchService {
     const filter = this.createFilter(searchRequest);
 
     return this.elasticSearchClient.search({
-      index: 'outer-care-worker',
+      index: this.outerCareWorkerIndex,
       body: {
         from: searchRequest.from,
         size: searchRequest.size,
@@ -45,7 +47,7 @@ export class SearchService {
 
   public searchOuterCareWorkerById(id: string) {
     return this.elasticSearchClient.search({
-      index: 'outer-care-worker',
+      index: this.outerCareWorkerIndex,
       body: {
         query: {
           term: {
