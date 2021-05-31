@@ -1,7 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import axios from 'axios';
 import * as crypto from 'crypto';
-
 @Injectable()
 export class SmsService {
   private hmac: crypto.Hmac;
@@ -12,46 +11,58 @@ export class SmsService {
       type: 'SMS',
       contentType: 'COMM',
       countryCode: '82',
-      from: '01020140794',
+      from: process.env.NCLOUD_DOLBOM_SMS_PHONE_NUMBER,
+      content: '안녕하세요 돌봄입니다.',
       messages: [
         {
           to: phoneNumber,
-          content: '위의 content와 별도로 해당 번호로만 보내는 내용(optional)',
+          subject: '돌봄',
+          content: '안녕하세요 돌봄입니다.',
         },
       ],
     };
 
-    const timestamp = Date.now();
+    const timestamp = Date.now().toString();
+
     const signature = this.createXNcpApigwSignatureV2(timestamp);
 
     try {
       const response = await axios.post(
-        `${process.env.NCLOUD_SMS_API_URL}/services/${process.env.NCLOUD_SMS_SERVICE_ID}/messages`,
+        `https://sens.apigw.ntruss.com/sms/v2/services/${process.env.NCLOUD_SMS_SERVICE_ID}/messages`,
         message,
         {
           headers: {
             'Content-Type': 'application/json; charset=utf-8',
             'x-ncp-apigw-timestamp': timestamp,
-            'x-ncp-iam-access-key': process.env.NCLOUD_RIVERANDEYE_KEY,
+            'x-ncp-iam-access-key': process.env.NCLOUD_DOLBOM_ACCESS_KEY,
             'x-ncp-apigw-signature-v2': signature,
           },
         },
       );
+      return response;
     } catch (e) {
-      console.log(e.request);
-      console.log(e.response);
+      return e.response.data;
     }
   }
 
-  private createXNcpApigwSignatureV2(timestamp: number) {
-    const message = `POST /sms/v2/services/${process.env.NCLOUD_SMS_SERVICE_ID}/messages\n${timestamp}\n${process.env.NCLOUD_RIVERANDEYE_KEY}`;
-    console.log(message);
-
+  private createXNcpApigwSignatureV2(timeStamp: string) {
+    const space = ' ';
+    const newLine = '\n';
+    const method = 'POST';
+    const uri = process.env.NCLOUD_SMS_SERVICE_ID;
+    const accessKey = process.env.NCLOUD_DOLBOM_ACCESS_KEY;
+    const secretKey = process.env.NCLOUD_DOLBOM_SECRET_KEY;
+    const url2 = `/sms/v2/services/${uri}/messages`;
     const signature = crypto
-      .createHmac('sha256', process.env.NCLOUD_RIVERANDEYE_SECRET_KEY)
-      .update(JSON.stringify(message))
+      .createHmac('sha256', secretKey)
+      .update(method)
+      .update(space)
+      .update(url2)
+      .update(newLine)
+      .update(timeStamp)
+      .update(newLine)
+      .update(accessKey)
       .digest('base64');
-
-    return signature;
+    return signature.toString();
   }
 }

@@ -21,6 +21,11 @@ export class RecipientController {
     return await this.recipientService.getRecipientById(request.careCenter.id, id);
   }
 
+  @Get('/matching-proposal-receive/:id')
+  public async getRecipientForMatchingProposalReceiveById(@Param('id') id: string) {
+    return await this.recipientService.getRecipientByRecipientId(id);
+  }
+
   @Post()
   @UseGuards(OnlyCareCenterGuard)
   public async createRecipient(

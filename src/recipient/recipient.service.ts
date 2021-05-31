@@ -41,6 +41,16 @@ export class RecipientService {
     });
   }
 
+  public getRecipientByRecipientId(id: string) {
+    return this.recipientRepository.findOne({
+      relations: ['recipientMetas'],
+      where: {
+        id,
+        isDeleted: false,
+      },
+    });
+  }
+
   public async createRecipient(careCenterId: string, recipientRequest: UpsertRecipientRequest) {
     const newRecipient = this.recipientRepository.create(recipientRequest);
     newRecipient.careCenterId = careCenterId;
