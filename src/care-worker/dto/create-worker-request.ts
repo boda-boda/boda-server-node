@@ -29,7 +29,7 @@ class CareWorkerRequest {
 }
 
 class CareWorkerCareerRequest {
-  public place: string;
+  public workplace: string;
 
   public customer: string;
 
@@ -75,10 +75,6 @@ export class CreateCareWorkerRequest {
 
   @IsString({ each: true })
   public careWorkerReligions: string[];
-
-  @ValidateNested({ each: true })
-  @Type(() => CareWorkerScheduleRequest)
-  public careWorkerSchedules: CareWorkerScheduleRequest[];
 
   @ValidateNested({ each: true })
   @Type(() => CareWorkerCareerRequest)

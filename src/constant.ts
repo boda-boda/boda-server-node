@@ -34,3 +34,7 @@ export const outerCareWorkerScheduleTypes = ['오전', '오후', '종일', ''];
 export type MatchingProposalStatus = 'AWAITING' | 'ACCEPTED' | 'DECLINED';
 
 export const MATCHING_PROPOSAL_STATUS = ['AWAITING', 'ACCEPTED', 'DECLINED'];
+
+export const CREDITS_ON_CONVERSION = 50;
+
+export const KR_TIME_DIFF = 9 * 60 * 60 * 1000;

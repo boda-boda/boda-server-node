@@ -1,14 +1,28 @@
-import { Injectable, NotAcceptableException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotAcceptableException,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CareWorkerMetaEntity } from 'src/care-worker-meta/care-worker-meta.entity';
+import { CareWorkerCareerEntity } from 'src/care-worker-career/care-worker-career.entity';
+import { CareWorkerEntity } from 'src/care-worker/care-worker.entity';
 import { CAPABILITY, outerCareWorkerScheduleTypes, RELIGION } from 'src/constant';
+import { CreditHistoryEntity } from 'src/credit/entity/credit-history.entity';
+import { CreditEntity } from 'src/credit/entity/credit.entity';
 import { OuterCareWorkerCareerEntity } from 'src/outer-care-worker/entity/outer-care-worker-career.entity';
 import { OuterCareWorkerMetaEntity } from 'src/outer-care-worker/entity/outer-care-worker-meta.entity';
-import { Repository } from 'typeorm';
+import { getConnection, Repository } from 'typeorm';
+import CenterWorkerJoinRequest from '../dto/center-worker-join-request.dto';
 import { CreateOuterCareWorkerRequest } from '../dto/create-outer-care-worker-request';
+import { OuterCareWorkerConversionResponse } from '../dto/outer-care-worker-conversion-response.dto';
 import { CenterWorkerJoinTableEntity } from '../entity/center-worker-join-table.entity';
 import { OuterCareWorkerAreaEntity } from '../entity/outer-care-worker-area.entity';
 import { OuterCareWorkerEntity } from '../entity/outer-care-worker.entity';
 import { WorkerComplimentEntity } from '../entity/worker-compliment.entity';
+import { CareWorkerAreaEntity } from 'src/care-worker-area/care-worker-area.entity';
 
 @Injectable()
 export class OuterCareWorkerService {
@@ -25,6 +39,18 @@ export class OuterCareWorkerService {
     private readonly outerCareWorkerCareerRepository: Repository<OuterCareWorkerCareerEntity>,
     @InjectRepository(OuterCareWorkerMetaEntity)
     private readonly outerCareWorkerMetaRepository: Repository<OuterCareWorkerMetaEntity>,
+    @InjectRepository(CreditEntity)
+    public readonly creditRepository: Repository<CreditEntity>,
+    @InjectRepository(CreditHistoryEntity)
+    public readonly creditHistoryRepository: Repository<CreditHistoryEntity>,
+    @InjectRepository(CareWorkerEntity)
+    public readonly careWorkerRepository: Repository<CareWorkerEntity>,
+    @InjectRepository(CareWorkerMetaEntity)
+    private readonly careWorkerMetaRepository: Repository<CareWorkerMetaEntity>,
+    @InjectRepository(CareWorkerCareerEntity)
+    private readonly careWorkerCareerRepository: Repository<CareWorkerCareerEntity>,
+    @InjectRepository(CareWorkerAreaEntity)
+    private readonly careWorkerAreaRepository: Repository<CareWorkerAreaEntity>,
   ) {}
 
   public addCareWorkerCompliment(careCenterId: string, outerCareWorkerId: string, content: string) {
@@ -267,6 +293,18 @@ export class OuterCareWorkerService {
     return targetOuterCareWorker;
   }
 
+  public async createCenterWorkerJoin(ocwid: string, ccid: string) {
+    const createCenterWorkerJoinRequest = {
+      outerCareWorkerId: ocwid,
+      careCenterId: ccid,
+    } as CenterWorkerJoinRequest;
+    const centerWorkerJoin = this.centerWorkerJoinTableRepository.create(
+      createCenterWorkerJoinRequest,
+    );
+    await this.centerWorkerJoinTableRepository.save(centerWorkerJoin);
+    return centerWorkerJoin;
+  }
+
   public getOuterCareWorkerById(id: string) {
     return this.outerCareWorkerRepository.findOne({
       relations: ['outerCareWorkerMetas', 'outerCareWorkerAreas', 'outerCareWorkerCareers'],
@@ -275,5 +313,138 @@ export class OuterCareWorkerService {
         isDeleted: false,
       },
     });
+  }
+
+  public getConvertedOuterCareWorkersByCareCenterId(ccid: string) {
+    return this.centerWorkerJoinTableRepository.find({
+      where: {
+        careCenterId: ccid,
+      },
+    });
+  }
+
+  public async convertOuterCareWorker(ocwid: string, ccid: string, usedCredit: number) {
+    const createCenterWorkerJoinRequest = {
+      outerCareWorkerId: ocwid,
+      careCenterId: ccid,
+    } as CenterWorkerJoinRequest;
+
+    const queryRunner = await getConnection().createQueryRunner();
+    await queryRunner.startTransaction();
+    try {
+      //center-worker 엔티티에 추가
+      const centerWorkerJoin = this.centerWorkerJoinTableRepository.create(
+        createCenterWorkerJoinRequest,
+      );
+      await queryRunner.manager.save(centerWorkerJoin);
+
+      //credit 사용한 만큼 업데이트
+      const targetCredit = await this.creditRepository.findOne({
+        where: {
+          careCenterId: ccid,
+        },
+      });
+      const outerCareWorker = await this.outerCareWorkerRepository.findOne({
+        relations: ['outerCareWorkerMetas', 'outerCareWorkerAreas', 'outerCareWorkerCareers'],
+        where: {
+          id: ocwid,
+          isDeleted: false,
+        },
+      });
+      if (targetCredit.careCenterId !== ccid) {
+        throw new UnauthorizedException('권한이 없습니다.');
+      }
+
+      //History에 얼만큼 썼는지, 누구 전환할 때 썼는지 기록하기 위해 요양보호사 이름 필요
+      const creditUseInfo = {
+        usedCredit: usedCredit,
+        careWorkerName: outerCareWorker.name,
+      };
+
+      //Credit 쓴 만큼 차감 (freeCredit부터 차감)
+      let updatedCreditRequest;
+      if (targetCredit.freeCredit - creditUseInfo.usedCredit >= 0) {
+        updatedCreditRequest = {
+          ...targetCredit,
+          freeCredit: targetCredit.freeCredit - creditUseInfo.usedCredit,
+        };
+      } else if (
+        targetCredit.paidCredit + targetCredit.freeCredit - creditUseInfo.usedCredit >=
+        0
+      ) {
+        updatedCreditRequest = {
+          ...targetCredit,
+          freeCredit: 0,
+          paidCredit: targetCredit.paidCredit + targetCredit.freeCredit - creditUseInfo.usedCredit,
+        };
+      } else throw new BadRequestException('Not Enough Credit');
+
+      const updatedTargetCredit = this.creditRepository.merge(targetCredit, updatedCreditRequest);
+      await queryRunner.manager.save(updatedTargetCredit);
+
+      //credit 사용 내역 creditHistory에 저장
+      const creditHistoryRequest = {
+        content: `${creditUseInfo.careWorkerName} 요양보호사님 전환`,
+        credits: -1 * creditUseInfo.usedCredit,
+        type: '사용',
+        date: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString(),
+        creditId: updatedTargetCredit.id,
+      };
+
+      const creditHistory = this.creditHistoryRepository.create(creditHistoryRequest);
+      await queryRunner.manager.save(creditHistory);
+
+      //해당 외부요양보호사 정보 복사하여 내부요양보호사에 저장
+      const outerCareWorkerOnFormat = new OuterCareWorkerConversionResponse(outerCareWorker);
+
+      const newCareWorker = this.careWorkerRepository.create({
+        ...outerCareWorkerOnFormat.careWorker,
+        careCenterId: ccid,
+      });
+      await queryRunner.manager.save(newCareWorker);
+
+      const availableMetaEntity = outerCareWorkerOnFormat.careWorkerCapabilities.map((a) =>
+        this.careWorkerMetaRepository.create({
+          type: CAPABILITY,
+          key: a,
+          careWorkerId: newCareWorker.id,
+        }),
+      );
+      await queryRunner.manager.save(availableMetaEntity);
+
+      const religionMetaEntity = outerCareWorkerOnFormat.careWorkerReligions?.map((a) =>
+        this.careWorkerMetaRepository.create({
+          type: RELIGION,
+          key: a,
+          careWorkerId: newCareWorker.id,
+        }),
+      );
+
+      await queryRunner.manager.save(religionMetaEntity);
+
+      const targetCareers = outerCareWorkerOnFormat.careWorkerCareers.map((a) => {
+        a.careWorkerId = newCareWorker.id;
+        return a;
+      });
+
+      const newCareWorkerCareer = this.careWorkerCareerRepository.create(targetCareers);
+
+      await queryRunner.manager.save(newCareWorkerCareer);
+
+      const targetAreas = outerCareWorkerOnFormat.careWorkerAreas.map((a) => {
+        a.careWorkerId = newCareWorker.id;
+        return a;
+      });
+      const newCareWorkerArea = this.careWorkerAreaRepository.create(targetAreas);
+
+      await queryRunner.manager.save(newCareWorkerArea);
+
+      queryRunner.commitTransaction();
+    } catch (e) {
+      await queryRunner.rollbackTransaction();
+      throw e;
+    } finally {
+      await queryRunner.release();
+    }
   }
 }

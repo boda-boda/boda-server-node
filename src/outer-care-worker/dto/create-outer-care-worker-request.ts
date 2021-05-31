@@ -31,9 +31,9 @@ class OuterCareWorkerRequest {
 class OuterCareWorkerCareerRequest {
   public workplace: string;
 
-  public recipient: string;
-
   public duration: string;
+
+  public memo: string;
 }
 
 class OuterCareWorkerAreaRequest {

@@ -81,10 +81,6 @@ export class CareWorkerController {
       throw new InternalServerErrorException('JWT가 이상합니다.');
     }
 
-    if (!this.isValidCareWorkerSchledule(createWorkerRequest.careWorkerSchedules)) {
-      throw new BadRequestException('스케줄 양식이 올바르지 않습니다.');
-    }
-
     const queryRunner = getConnection().createQueryRunner();
     await queryRunner.startTransaction();
 
@@ -119,10 +115,6 @@ export class CareWorkerController {
   ) {
     if (!request.careCenter.id) {
       throw new InternalServerErrorException('JWT가 이상합니다.');
-    }
-
-    if (!this.isValidCareWorkerSchledule(createWorkerRequest.careWorkerSchedules)) {
-      throw new BadRequestException('스케줄 양식이 올바르지 않습니다.');
     }
 
     const queryRunner = getConnection().createQueryRunner();

@@ -29,6 +29,7 @@ import { SentryInterceptor } from 'src/common/interceptor/sentry.interceptor';
 import { OnlyCareCenterGuard } from 'src/common/guard/only-care-center.guard';
 import ChangePasswordRequest from './dto/change-password-request';
 import CreateCareCenterRequest from './dto/create-care-center-request';
+import { CreditService } from 'src/credit/service/credit.service';
 
 @Controller('auth')
 @UseInterceptors(SentryInterceptor)
@@ -36,6 +37,7 @@ export class AuthController {
   public constructor(
     private readonly authService: AuthService,
     private readonly careCenterService: CareCenterService,
+    private readonly creditService: CreditService,
   ) {}
 
   @Post('login')
@@ -138,11 +140,12 @@ export class AuthController {
     }
 
     const result = await this.careCenterService.createCareCenter({ name, password, email });
+    const targetCareCenter = await this.careCenterService.getCareCenterByName(name);
+    const credit = await this.creditService.createCredit(targetCareCenter.id);
 
     if (!result) {
       throw new InternalServerErrorException('사용자 생성 안됨 오류');
     }
-
     const accessToken = this.authService.createAccessToken(result);
     const refreshToken = this.authService.createRefreshToken(result);
 
@@ -155,6 +158,7 @@ export class AuthController {
       accessToken,
       expiresIn: 60,
       careCenter: new CareCenterResponse(result),
+      credit: credit,
     });
   }
 

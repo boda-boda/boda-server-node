@@ -21,7 +21,7 @@ export class CenterWorkerJoinTableEntity extends BaseEntity {
   })
   public outerCareWorkerId: string;
 
-  @ManyToOne(() => CareCenterEntity, (careCenterEntity) => careCenterEntity.careCenterMetas, {
+  @ManyToOne(() => CareCenterEntity, (careCenterEntity) => careCenterEntity.connectedOuterWorkers, {
     nullable: false,
   })
   @JoinColumn({
