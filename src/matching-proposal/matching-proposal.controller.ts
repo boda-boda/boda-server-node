@@ -5,6 +5,7 @@ import {
   NotFoundException,
   Param,
   Post,
+  Put,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -16,6 +17,7 @@ import { SmsService } from 'src/sms/sms.service';
 import CreateMatchingProposalRequest from './dto/create-matching-proposal-request.dto';
 import MatchingProposalResponse from './dto/matching-proposal-response.dto';
 import { MatchingProposalService } from './matching-proposal.service';
+import UpdateMatchingProposalRequest from './dto/update-matching-proposal-request.dto';
 
 @Controller('matching-proposal')
 export class MatchingProposalController {
@@ -47,6 +49,29 @@ export class MatchingProposalController {
     return new MatchingProposalResponse(matchingProposal);
   }
 
+  @Get('/recieve/:id')
+  public async getMatchingProposalRecieveById(@Param('id') id: string) {
+    const matchingProposal =
+      await this.matchingProposalService.getMatchingProposalByMatchingProposalId(id);
+
+    return new MatchingProposalResponse(matchingProposal);
+  }
+
+  @Put('/:id')
+  public async updateMatchingProposal(
+    @Body() updateMatchingProposalRequest: UpdateMatchingProposalRequest,
+  ) {
+    let result;
+    try {
+      result = await this.matchingProposalService.updateMatchingProposal(
+        updateMatchingProposalRequest.id,
+        updateMatchingProposalRequest.status,
+      );
+    } catch (e) {
+      throw e;
+    }
+  }
+
   @Post('/')
   @UseGuards(OnlyCareCenterGuard)
   public async createMatchingProposal(
@@ -66,9 +91,9 @@ export class MatchingProposalController {
 
     if (!recipient) throw new NotFoundException('요청하신 수급자가 존재하지 않습니디.');
 
-    this.smsService.sendMessage(recipient.phoneNumber);
+    // this.smsService.sendMessage(recipient.phoneNumber);
 
-    return await this.matchingProposalService.createMatchingProposal(
+    await this.matchingProposalService.createMatchingProposal(
       createMatchingProposalRequest,
       request.careCenter.id,
     );
