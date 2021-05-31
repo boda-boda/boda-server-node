@@ -49,8 +49,8 @@ export class MatchingProposalController {
     return new MatchingProposalResponse(matchingProposal);
   }
 
-  @Get('/recieve/:id')
-  public async getMatchingProposalRecieveById(@Param('id') id: string) {
+  @Get('/receive/:id')
+  public async getMatchingProposalReceiveById(@Param('id') id: string) {
     const matchingProposal =
       await this.matchingProposalService.getMatchingProposalByMatchingProposalId(id);
 

@@ -91,7 +91,7 @@ export class MatchingProposalService {
           isDeleted: false,
         },
       });
-      const link = `https://dol-bom.com/matching-proposal-recieve/${newMatchingProposal.id}`;
+      const link = `https://dol-bom.com/matching-proposal-receive/${newMatchingProposal.id}`;
       const message = {
         type: 'LMS',
         contentType: 'COMM',
