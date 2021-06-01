@@ -17,6 +17,7 @@ export default class MatchingProposalResponse {
         ? '수락됨'
         : '거절됨';
     this.hourlyWage = m.hourlyWage;
+    this.securityCode = m.securityCode;
   }
   public id: string;
   public hourlyWage: number;
@@ -24,4 +25,5 @@ export default class MatchingProposalResponse {
   public status: string;
   public outerCareWorker: OuterCareWorkerResponse;
   public recipient: RecipientEntity;
+  public securityCode: number;
 }

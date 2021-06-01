@@ -11,4 +11,6 @@ export default class CreateMatchingProposalRequest {
 
   @IsString()
   public recipientId: string;
+
+  public securityCode: number;
 }
