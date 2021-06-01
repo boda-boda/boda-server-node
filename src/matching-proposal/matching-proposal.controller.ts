@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   NotFoundException,
   Param,
@@ -97,5 +98,11 @@ export class MatchingProposalController {
       createMatchingProposalRequest,
       request.careCenter.id,
     );
+  }
+
+  @Delete('/:id')
+  @UseGuards(OnlyCareCenterGuard)
+  public async deleteMatchingProposalById(@Req() request: Request, @Param('id') id: string) {
+    await this.matchingProposalService.deleteMatchingProposalById(request.careCenter.id, id);
   }
 }

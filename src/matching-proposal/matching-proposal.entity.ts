@@ -31,6 +31,12 @@ export class MatchingProposalEntity extends BaseEntity {
   public status: MatchingProposalStatus; // TODO: 좋은 방법이 없을까요
 
   @Column({
+    type: 'int',
+    nullable: true,
+  })
+  public securityCode: number;
+
+  @Column({
     nullable: false,
   })
   public careCenterId: string;

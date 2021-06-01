@@ -40,7 +40,7 @@ export class MatchingProposalService {
   public getMatchingProposalsOfCareCenter(careCenterId: string) {
     return this.matchingProposalRespository.find({
       relations: ['outerCareWorker', 'recipient'],
-      where: { careCenterId },
+      where: { careCenterId, isDeleted: false },
     });
   }
   private createXNcpApigwSignatureV2(timeStamp: string) {
@@ -67,6 +67,7 @@ export class MatchingProposalService {
     createMatchingProposalRequest: CreateMatchingProposalRequest,
     careCenterId: string,
   ) {
+    const randomSecurityCode = Math.floor(Math.random() * 10000);
     const queryRunner = await getConnection().createQueryRunner();
     await queryRunner.startTransaction();
     try {
@@ -74,6 +75,7 @@ export class MatchingProposalService {
         createMatchingProposalRequest,
       );
       newMatchingProposal.careCenterId = careCenterId;
+      newMatchingProposal.securityCode = randomSecurityCode;
       await queryRunner.manager.save(newMatchingProposal);
 
       const outerCareWorker = await this.outerCareWorkerRepository.findOne({
@@ -106,7 +108,7 @@ export class MatchingProposalService {
               recipient.age
             }세\n시간: ${recipient.schedule}\n위치: ${recipient.address}\n시급: ${
               newMatchingProposal.hourlyWage
-            }원\n자세히 보기: ${link}/`,
+            }원\n자세히 보기 [보안코드: ${randomSecurityCode}]\n${link}/`,
           },
         ],
       };
@@ -154,5 +156,18 @@ export class MatchingProposalService {
     );
     await this.matchingProposalRespository.save(mergedTargetMatchingProposal);
     return mergedTargetMatchingProposal;
+  }
+
+  public async deleteMatchingProposalById(careCenterId: string, id: string) {
+    const targetMatchingProposal = await this.matchingProposalRespository.findOne({
+      where: {
+        careCenterId,
+        id,
+        isDeleted: false,
+      },
+    });
+
+    targetMatchingProposal.isDeleted = true;
+    await this.matchingProposalRespository.save(targetMatchingProposal);
   }
 }
